@@ -2,7 +2,7 @@
 #include "buttonTask.h"
 
 
-Button* button1 = NULL;
+Button button1;
 
 
 
@@ -11,11 +11,8 @@ void buttonTask( void * parameter ) {
    
    //pasar por serial para ver salida
    
-   *button1 = {18, 0, false};
-   
-   
-   
-   //pinMode(button1.PIN, INPUT_PULLUP);
+   button1 = {18, 0, false};
+   pinMode(button1.PIN, INPUT_PULLUP);
     
     while(1) {
 
