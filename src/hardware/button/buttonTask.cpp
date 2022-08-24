@@ -1,11 +1,41 @@
 #include <Arduino.h>
 #include "buttonTask.h"
 
+
+Button* button1 = NULL;
+
+
+
+void buttonTask( void * parameter ) {
+ 
+   
+   //pasar por serial para ver salida
+   
+   *button1 = {18, 0, false};
+   
+   
+   
+   //pinMode(button1.PIN, INPUT_PULLUP);
+    
+    while(1) {
+
+        vTaskDelay(1000 / portTICK_RATE_MS);
+    }
+
+}
+
+
+/*
 struct Button {
     const uint8_t PIN;
     uint32_t numberKeyPresses;
     bool pressed;
-};
+} ;
+*/
+
+/*
+
+
 
 Button button1 = NULL;
 
@@ -50,14 +80,14 @@ void buttonTask( void * parameter ) {
    
     
     while(1) {
-        /* Blink off (output low) */
+        
         digitalWrite(ONBOARD_LED, LOW);
         vTaskDelay(1000 / portTICK_RATE_MS);
-        /* Blink on (output high) */
+        
         digitalWrite(ONBOARD_LED, HIGH);
         vTaskDelay(1000 / portTICK_RATE_MS);
     }
 
 }
 
-   
+   */

@@ -3,15 +3,21 @@
 #include "hardware/led/ledTask.h"
 #include "hardware/button/buttonTask.h"
 
-//#include "config.h"
+#include "config.h"
 
 
-static TaskHandle_t buttonTask_handle;
+
 static TaskHandle_t ledTask_handle;
 
 
 
-
+void wait_for_button_push()
+{
+  while (gpio_get_level(GPIO_BUTTON) == 0)
+  {
+    vTaskDelay(pdMS_TO_TICKS(100));
+  }
+}
 
 
 
@@ -24,7 +30,7 @@ void setup()
 Serial.begin(112500);
 
 
-xTaskCreatePinnedToCore(buttonTask, "button Task", 10000, NULL, 1, &ledTask_handle, 1); 
+
 xTaskCreatePinnedToCore(ledTask, "led Task2", 10000, NULL, 1, &ledTask_handle, 1); 
 
 
