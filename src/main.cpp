@@ -10,7 +10,6 @@
 static TaskHandle_t ledTask_handle;
 
 
-
 void wait_for_button_push()
 {
   while (gpio_get_level(GPIO_BUTTON) == 0)
