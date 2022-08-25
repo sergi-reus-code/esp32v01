@@ -96,9 +96,8 @@ void main_task(void *param)
 
   SPIFFS.totalBytes();
   SPIFFS.begin(true, "/sdcard");
-  
-
-
+  bool resp = SPIFFS.exists("/Hello.mp3");
+  Serial.println(resp);
 
   
 #else
