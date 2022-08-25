@@ -48,8 +48,3 @@ extern i2s_config_t i2s_mic_Config;
 extern i2s_pin_config_t i2s_mic_pins;
 // i2s speaker pins
 extern i2s_pin_config_t i2s_speaker_pins;
-
-
-
-
-

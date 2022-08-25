@@ -1,23 +1,15 @@
 #include <Arduino.h>
 #include <stdio.h>
-//#include <FreeRTOS.h>
+#include <FreeRTOS.h>
 #include <I2SMEMSSampler.h>
+#include <ADCSampler.h>
 #include <I2SOutput.h>
+#include <DACOutput.h>
 #include <SDCard.h>
 #include "SPIFFS.h"
 #include <WAVFileReader.h>
 #include <WAVFileWriter.h>
-#include "esp32-hal-log.h"
-
-#include "hardware/led/ledTask.h"
-#include "hardware/button/buttonTask.h"
-
 #include "config.h"
-
-static const char *TAG = "AW";
-
-static TaskHandle_t ledTask_handle;
-
 
 void wait_for_button_push()
 {
