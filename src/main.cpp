@@ -23,6 +23,7 @@ void wait_for_button_push()
 {
   while (gpio_get_level(GPIO_BUTTON) == 0)
   {
+    ESP_LOGI(TAG, "Button pressed");
     vTaskDelay(pdMS_TO_TICKS(100));
   }
 }
@@ -105,7 +106,7 @@ void main_task(void *param)
   new SDCard("/sdcard", PIN_NUM_MISO, PIN_NUM_MOSI, PIN_NUM_CLK, PIN_NUM_CS);
 #endif
 
-  ESP_LOGI(TAG, "Creating microphone");
+  //ESP_LOGI(TAG, "Creating microphone");
 #ifdef USE_I2S_MIC_INPUT
   //I2SSampler *input = new I2SMEMSSampler(I2S_NUM_0, i2s_mic_pins, i2s_mic_Config);
 #else
@@ -118,18 +119,19 @@ void main_task(void *param)
   Output *output = new DACOutput(I2S_NUM_0);
 #endif
 
-  //gpio_set_direction(GPIO_BUTTON, GPIO_MODE_INPUT);
-  //gpio_set_pull_mode(GPIO_BUTTON, GPIO_PULLDOWN_ONLY);
+
 
   while (true)
   {
-ESP_LOGI(TAG, "Waitting");
+    ESP_LOGI(TAG, "Waitting");
 
     // wait for the user to push and hold the button
-    //wait_for_button_push();
+    wait_for_button_push();
+    ESP_LOGI(TAG, "Recording");
     //record(input, "/sdcard/test.wav");
     // wait for the user to push the button again
-    //wait_for_button_push();
+    wait_for_button_push();
+    ESP_LOGI(TAG, "Playing");
     //play(output, "/sdcard/test.wav");
     
     vTaskDelay(pdMS_TO_TICKS(1000));
@@ -140,6 +142,9 @@ void setup()
 {
   Serial.begin(115200);
   vTaskDelay(pdMS_TO_TICKS(1000));
+
+    gpio_set_direction(GPIO_BUTTON, GPIO_MODE_INPUT);
+  gpio_set_pull_mode(GPIO_BUTTON, GPIO_PULLDOWN_ONLY);
   
   xTaskCreate(main_task, "Main", 4096, NULL, 0, NULL);
 }
