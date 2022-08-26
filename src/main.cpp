@@ -120,16 +120,48 @@ void main_task(void *param)
   while (true)
   {
     ESP_LOGI(TAG, "Waitting");
-
+    
     // wait for the user to push and hold the button
-    wait_for_button_push();
-
+    wait_for_button_push();delay(1000);
+    //         !!
+    //         \/
     ESP_LOGI(TAG, "Recording");
-    // record(input, "/sdcard/test.wav");
-    //  wait for the user to push the button again
-    wait_for_button_push();
+    // record(input, "/sdcard/query.wav");
+    //         !!
+    //         \/
+    wait_for_button_push();delay(1000);
+    //         !!
+    //         \/
     ESP_LOGI(TAG, "Playing");
-    play(output, "/sdcard/test.wav");
+    //play(output, "/sdcard/query.wav");
+    //         !!
+    //         \/
+    wait_for_button_push();delay(1000);
+    //         !!
+    //         \/
+    ESP_LOGI(TAG, "Sending Query");
+    //send(output, "/sdcard/query.wav");
+    //         !!
+    //         \/
+    wait_for_button_push();delay(1000);
+    //         !!
+    //         \/
+    ESP_LOGI(TAG, "Receiving Response");
+    //recive(receiver, "/sdcard/response.wav");
+    //         !!
+    //         \/
+    wait_for_button_push();delay(1000);
+    //         !!
+    //         \/
+    ESP_LOGI(TAG, "Playing Response");
+    //play(output, "/sdcard/response.wav");
+    //         !!
+    //         \/
+    wait_for_button_push();delay(1000);
+    //         !!
+    //         \/
+    ESP_LOGI(TAG, "Deleting Query and Response");
+    //delete("/sdcard/query.wav","/sdcard/response.wav");
 
     vTaskDelay(pdMS_TO_TICKS(1000));
   }
@@ -138,7 +170,8 @@ void main_task(void *param)
 void setup()
 {
   Serial.begin(115200);
-  vTaskDelay(pdMS_TO_TICKS(1000));
+  delay(1000);
+  //vTaskDelay(pdMS_TO_TICKS(1000));
 
   gpio_set_direction(GPIO_BUTTON, GPIO_MODE_INPUT);
   gpio_set_pull_mode(GPIO_BUTTON, GPIO_PULLDOWN_ONLY);
