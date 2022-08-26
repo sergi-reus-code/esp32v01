@@ -9,8 +9,8 @@
 #include <WAVFileWriter.h>
 #include "esp32-hal-log.h"
 
-#include "hardware/led/ledTask.h"
-#include "hardware/button/buttonTask.h"
+#include "inote_hal/led/ledTask.h"
+#include "inote_hal/button/buttonTask.h"
 
 #include "config.h"
 
