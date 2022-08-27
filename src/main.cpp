@@ -14,18 +14,11 @@
 
 #include "config.h"
 
-static const char *TAG = "AW";
+static const char *TAG = "iNote2022";
 
 static TaskHandle_t ledTask_handle;
 
-void wait_for_button_push()
-{
-  while (gpio_get_level(GPIO_BUTTON) == 0)
-  {
-    vTaskDelay(pdMS_TO_TICKS(1000));
-  }
-  ESP_LOGI(TAG, "Button pressed");
-}
+
 
 void record(I2SSampler *input, const char *fname)
 {
@@ -54,6 +47,8 @@ void record(I2SSampler *input, const char *fname)
   free(samples);
   ESP_LOGI(TAG, "Finished recording");
 }
+
+
 
 void play(Output *output, const char *fname)
 {
@@ -90,32 +85,25 @@ void main_task(void *param)
   ESP_LOGI(TAG, "Starting up");
 
 #ifdef USE_SPIFFS
+  
   ESP_LOGI(TAG, "Mounting SPIFFS on /sdcard");
-
-  // SPIFFS.begin(false,"/sdcard");
-
-  SPIFFS.totalBytes();
   SPIFFS.begin(true, "/sdcard");
-  bool resp = SPIFFS.exists("/test.wav");
-  Serial.println(resp);
+  //bool resp = SPIFFS.exists("/query_16000.wav");
+  //Serial.println(resp);
 
 #else
   ESP_LOGI(TAG, "Mounting SDCard on /sdcard");
   new SDCard("/sdcard", PIN_NUM_MISO, PIN_NUM_MOSI, PIN_NUM_CLK, PIN_NUM_CS);
 #endif
 
-  // ESP_LOGI(TAG, "Creating microphone");
-#ifdef USE_I2S_MIC_INPUT
-  // I2SSampler *input = new I2SMEMSSampler(I2S_NUM_0, i2s_mic_pins, i2s_mic_Config);
-#else
-  I2SSampler *input = new ADCSampler(ADC_UNIT_1, ADC1_CHANNEL_7, i2s_adc_config);
-#endif
 
-#ifdef USE_I2S_SPEAKER_OUTPUT
+  I2SSampler *input = new I2SMEMSSampler(I2S_NUM_0, i2s_mic_pins, i2s_mic_Config);
+
+
   Output *output = new I2SOutput(I2S_NUM_0, i2s_speaker_pins);
-#else
-  Output *output = new DACOutput(I2S_NUM_0);
-#endif
+
+  
+
 
   while (true)
   {
@@ -126,41 +114,41 @@ void main_task(void *param)
     //         !!
     //         \/
     ESP_LOGI(TAG, "Recording");
-    // record(input, "/sdcard/query.wav");
+    record(input, "/sdcard/query.wav");
     //         !!
     //         \/
     wait_for_button_push();delay(1000);
     //         !!
     //         \/
     ESP_LOGI(TAG, "Playing");
-    //play(output, "/sdcard/query.wav");
+    play(output, "/sdcard/query.wav");
     //         !!
     //         \/
-    wait_for_button_push();delay(1000);
+    //wait_for_button_push();delay(1000);
     //         !!
     //         \/
-    ESP_LOGI(TAG, "Sending Query");
+    //ESP_LOGI(TAG, "Sending Query");
     //send(output, "/sdcard/query.wav");
     //         !!
     //         \/
-    wait_for_button_push();delay(1000);
+    //wait_for_button_push();delay(1000);
     //         !!
     //         \/
-    ESP_LOGI(TAG, "Receiving Response");
+    //ESP_LOGI(TAG, "Receiving Response");
     //recive(receiver, "/sdcard/response.wav");
     //         !!
     //         \/
-    wait_for_button_push();delay(1000);
+    //wait_for_button_push();delay(1000);
     //         !!
     //         \/
-    ESP_LOGI(TAG, "Playing Response");
+    //ESP_LOGI(TAG, "Playing Response");
     //play(output, "/sdcard/response.wav");
     //         !!
     //         \/
-    wait_for_button_push();delay(1000);
+    //wait_for_button_push();delay(1000);
     //         !!
     //         \/
-    ESP_LOGI(TAG, "Deleting Query and Response");
+    //ESP_LOGI(TAG, "Deleting Query and Response");
     //delete("/sdcard/query.wav","/sdcard/response.wav");
 
     vTaskDelay(pdMS_TO_TICKS(1000));
