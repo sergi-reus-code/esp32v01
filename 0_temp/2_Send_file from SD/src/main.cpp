@@ -121,6 +121,25 @@ String sendSDImageToGoogleDrive(String filepath)
         client_tcp.println();
 
 
+      
+
+
+
+
+
+
+
+
+
+
+  File filew = fs.open("/resp.jpg",FILE_WRITE);
+  if(!filew){
+    Serial.println("Failed to open file for reading");
+    SD.end();  
+    
+  }
+
+
 
 
 
@@ -137,7 +156,10 @@ String sendSDImageToGoogleDrive(String filepath)
       while (client_tcp.available()) 
       {
           char c = client_tcp.read();
-          if (state==true) getBody += String(c);        
+          
+          if (state==true) {
+              filew.print(c);
+              getBody += String(c);}        
           if (c == '\n') 
           {
             if (getAll.length()==0) state=true; 
@@ -150,7 +172,13 @@ String sendSDImageToGoogleDrive(String filepath)
        if (getBody.length()>0) break;
     }
     client_tcp.stop();
-    Serial.println(getBody);
+    //Serial.println(getBody);
+    //filew.print(getBody);
+
+
+   Serial.println("Guardar en archivo Wav");
+
+
   }
   else {
     getBody="Connected to " + String(myDomain) + " failed.";
