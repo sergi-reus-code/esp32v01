@@ -1,6 +1,5 @@
 #include <Arduino.h>
-//Dont delete never
- #include <esp32-hal-log.h>
+
 
 
 #include <stdio.h>
@@ -17,7 +16,8 @@
 #include <WAVFileWriter.h>
 #include "config.h"
 
-
+//Arduino LOGI , don't delete never
+#include <esp32-hal-log.h>
 static const char* TAG = "MyModule";
 
 
