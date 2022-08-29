@@ -27,6 +27,7 @@ void setup() {
     SPI.setFrequency(1000000);
     SD.begin(SD_CS);
 
+
     WiFi.disconnect();
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid.c_str(), password.c_str());
@@ -38,10 +39,10 @@ void setup() {
 
 
     audio.setPinout(I2S_BCLK, I2S_LRC, I2S_DOUT);
-    audio.setVolume(12); // 0...21
+    audio.setVolume(21); // 0...21
 
     //audio.connecttoFS(SD, "/320k_test.mp3");  //-> OK
-//    audio.connecttoFS(SD, "/Pink-Panther.wav");   //-> DON'T PLAY      
+    //audio.connecttoFS(SD, "/test_16bit_stereo.wav");   //-> DON'T PLAY      
 
       //audio.connecttohost("http://www.wdr.de/wdrlive/media/einslive.m3u");  //-> OK
     //audio.connecttohost("http://macslons-shop.com/media.asx");
@@ -52,7 +53,7 @@ void setup() {
    // audio.connecttohost("https://github.com/schreibfaul1/ESP32-audioI2S/raw/master/additional_info/Testfiles/Pink-Panther.wav"); //-> DON'T PLAY
     //audio.connecttohost("https://github.com/schreibfaul1/ESP32-audioI2S/raw/master/additional_info/Testfiles/320k_test.mp3"); // -> OK
 
-    //audio.connecttospeech("Wenn die Hunde schlafen, kann der Wolf gut Schafe stehlen.", "de");
+    audio.connecttospeech("Hola Martina, tu papa es un crac, ahora baja para darte el biberon.", "es");
    // audio.connecttospeech("Hola, ¿como estas?", "es");
 
 }

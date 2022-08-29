@@ -1,6 +1,5 @@
 #include "esp_log.h"
 #include "WAVFileReader.h"
-#include <Arduino.h>
 
 static const char *TAG = "WAV";
 
@@ -8,12 +7,7 @@ WAVFileReader::WAVFileReader(FILE *fp)
 {
     m_fp = fp;
     // read the WAV header
-    ESP_LOGI(TAG,"111111111111111 %d", m_fp);
-    
-        
     fread((void *)&m_wav_header, sizeof(wav_header_t), 1, m_fp);
-
-     ESP_LOGI(TAG,"22222222222 %d", m_fp);
     // sanity check the bit depth
     if (m_wav_header.bit_depth != 16)
     {

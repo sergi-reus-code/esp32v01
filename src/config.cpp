@@ -1,12 +1,14 @@
 #include "config.h"
 
+
 // i2s config for reading from I2S
 i2s_config_t i2s_mic_Config = {
     .mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_RX),
     .sample_rate = SAMPLE_RATE,
     .bits_per_sample = I2S_BITS_PER_SAMPLE_32BIT,
     .channel_format = I2S_CHANNEL_FMT_ONLY_LEFT,
-    .communication_format = I2S_COMM_FORMAT_I2S,
+    //.communication_format = I2S_COMM_FORMAT_I2S,
+    .communication_format =I2S_COMM_FORMAT_STAND_I2S,
     .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
     .dma_buf_count = 4,
     .dma_buf_len = 1024,
@@ -27,14 +29,3 @@ i2s_pin_config_t i2s_speaker_pins = {
     .ws_io_num = I2S_SPEAKER_LEFT_RIGHT_CLOCK,
     .data_out_num = I2S_SPEAKER_SERIAL_DATA,
     .data_in_num = I2S_PIN_NO_CHANGE};
-
-static const char *TAG = "iNote2022";
-
-    void wait_for_button_push()
-{
-  while (gpio_get_level(GPIO_BUTTON) == 0)
-  {
-    vTaskDelay(pdMS_TO_TICKS(1000));
-  }
-  ESP_LOGI(TAG, "Button pressed");
-}

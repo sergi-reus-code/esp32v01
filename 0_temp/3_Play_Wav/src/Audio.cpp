@@ -100,7 +100,6 @@ size_t AudioBuffer::writeSpace() {
     } else {
         //Serial.println("b");
         if(getReadPos() == 0){
-             Serial.println("a");
              m_writeSpace = (m_endPtr - m_writePtr - 1);
             }
         else
@@ -1136,8 +1135,7 @@ bool Audio::latinToUTF8(char* buff, size_t bufflen){
 //---------------------------------------------------------------------------------------------------------------------
 size_t Audio::readAudioHeader(uint32_t bytes){
     size_t bytesReaded = 0;
-    AUDIO_INFO("Dentro del read audio header");
-
+    
     if(m_codec == CODEC_WAV){
         int res = read_WAV_Header(InBuff.getReadPtr(), bytes);
         if(res >= 0) bytesReaded = res;
@@ -1183,8 +1181,6 @@ int Audio::read_WAV_Header(uint8_t* data, size_t len) {
     static size_t headerSize;
     static uint32_t cs = 0;
     static uint8_t bts = 0;
-
-    AUDIO_INFO("Estoy dentro del read_header");
 
     if(m_controlCounter == 0){
         m_controlCounter ++;
@@ -3050,14 +3046,15 @@ void Audio::processWebStream() {
     if(InBuff.bufferFilled() > maxFrameSize) {f_tmr_1s = false; cnt_slow = 0; loopCnt = 0;}
     if(f_tmr_1s){
         cnt_slow ++;
-        if(cnt_slow > 50){cnt_slow = 0; AUDIO_INFO("slow stream, dropouts are possible");}
+        if(cnt_slow > 50){cnt_slow = 0; //AUDIO_INFO("slow stream, dropouts are possible_1");
+        }
     }
     // if the buffer can't filled for several seconds try a new connection - - - - - - - - - - - - - - - - - - - - - - -
     if(f_stream && !availableBytes){
         loopCnt++;
         if(loopCnt > 200000) {              // wait several seconds
-            AUDIO_INFO("Stream lost -> try new connection");
-            connecttohost(m_lastHost);
+            AUDIO_INFO("Stream lost -> try new connection1");
+            //connecttohost(m_lastHost);
             return;
         }
     }
@@ -3282,7 +3279,7 @@ void Audio::processWebStreamTS() {
         static uint8_t cnt_slow = 0;
         cnt_slow ++;
         if(f_tmr_1s) {
-            if(cnt_slow > 50 && audio_info) audio_info("slow stream, dropouts are possible");
+            if(cnt_slow > 50 && audio_info) audio_info("slow stream, dropouts are possible_2");
             f_tmr_1s = false;
             cnt_slow = 0;
         }
@@ -3293,7 +3290,7 @@ void Audio::processWebStreamTS() {
         loopCnt++;
         if(loopCnt > 200000) {              // wait several seconds
             loopCnt = 0;
-            AUDIO_INFO("Stream lost -> try new connection");
+            AUDIO_INFO("Stream lost -> try new connection2");
             httpPrint(m_lastHost);
             return;
         }
@@ -3419,7 +3416,7 @@ void Audio::processWebStreamHLS() {
         static uint8_t cnt_slow = 0;
         cnt_slow ++;
         if(f_tmr_1s) {
-            if(cnt_slow > 25 && audio_info) audio_info("slow stream, dropouts are possible");
+            if(cnt_slow > 25 && audio_info) audio_info("slow stream, dropouts are possible_3");
             f_tmr_1s = false;
             cnt_slow = 0;
         }
@@ -3430,7 +3427,7 @@ void Audio::processWebStreamHLS() {
         loopCnt++;
         if(loopCnt > 200000) {              // wait several seconds
             loopCnt = 0;
-            AUDIO_INFO("Stream lost -> try new connection");
+            AUDIO_INFO("Stream lost -> try new connection3");
             httpPrint(m_lastHost);
             return;
         }
@@ -5070,7 +5067,7 @@ void Audio::slowStreamDetection(uint32_t inBuffFilled, uint32_t maxFrameSize){
     if(inBuffFilled < maxFrameSize){
         cnt_slow ++;
         if(f_tmr_1s) {
-            if(cnt_slow > 50) AUDIO_INFO("slow stream, dropouts are possible");
+            if(cnt_slow > 50) AUDIO_INFO("slow stream, dropouts are possible_4");
             f_tmr_1s = false;
             cnt_slow = 0;
         }

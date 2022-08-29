@@ -23,7 +23,8 @@ SDCard::SDCard(const char *mount_point, gpio_num_t miso, gpio_num_t mosi, gpio_n
   // Options for mounting the filesystem.
   // If format_if_mount_failed is set to true, SD card will be partitioned and
   // formatted in case when mounting fails.
-  esp_vfs_fat_sdmmc_mount_config_t mount_config = {
+  //esp_vfs_fat_sdmmc_mount_config_t mount_config = {
+  esp_vfs_fat_mount_config_t mount_config = {
       .format_if_mount_failed = true,
       .max_files = 5,
       .allocation_unit_size = 16 * 1024};
@@ -31,13 +32,16 @@ SDCard::SDCard(const char *mount_point, gpio_num_t miso, gpio_num_t mosi, gpio_n
   ESP_LOGI(TAG, "Initializing SD card");
 
   sdmmc_host_t host = SDSPI_HOST_DEFAULT();
+  //sdspi_slot_config_t slot_config = SDSPI_SLOT_CONFIG_DEFAULT();
   sdspi_slot_config_t slot_config = SDSPI_SLOT_CONFIG_DEFAULT();
   slot_config.gpio_miso = miso;
   slot_config.gpio_mosi = mosi;
   slot_config.gpio_sck = clk;
   slot_config.gpio_cs = cs;
 
-  ret = esp_vfs_fat_sdmmc_mount(m_mount_point.c_str(), &host, &slot_config, &mount_config, &m_card);
+  //ret = esp_vfs_fat_sdmmc_mount(m_mount_point.c_str(), &host, &slot_config, &mount_config, &m_card);
+ret = esp_vfs_fat_sdspi_mount(m_mount_point.c_str(), &host, &slot_config, &mount_config, &m_card);
+
 
   if (ret != ESP_OK)
   {
