@@ -39,8 +39,7 @@ SDCard::SDCard(const char *mount_point, gpio_num_t miso, gpio_num_t mosi, gpio_n
   slot_config.gpio_sck = clk;
   slot_config.gpio_cs = cs;
 
-  //ret = esp_vfs_fat_sdmmc_mount(m_mount_point.c_str(), &host, &slot_config, &mount_config, &m_card);
-ret = esp_vfs_fat_sdspi_mount(m_mount_point.c_str(), &host, &slot_config, &mount_config, &m_card);
+  ret = esp_vfs_fat_sdmmc_mount(m_mount_point.c_str(), &host, &slot_config, &mount_config, &m_card);
 
 
   if (ret != ESP_OK)

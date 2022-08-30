@@ -4,7 +4,7 @@
 #include <driver/i2s.h>
 
 // save to SPIFFS instead of SD Card?
-//#define USE_SPIFFS 1
+#define USE_SPIFFS 1
 
 // sample rate for the system
 #define SAMPLE_RATE 16000
@@ -39,8 +39,11 @@
 
 
 
+//#define RTC_DATA_ATTR int bootCountt = 0;
 
-#include "esp32-hal-log.h"
+
+
+//#include "esp32-hal-log.h"
 
 
 void wait_for_button_push();

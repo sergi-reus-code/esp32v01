@@ -173,7 +173,7 @@ String sendSDImageToGoogleDrive(String filepath)
     }
     client_tcp.stop();
     //Serial.println(getBody);
-    //filew.print(getBody);
+    filew.close();
 
 
    Serial.println("Guardar en archivo Wav");
