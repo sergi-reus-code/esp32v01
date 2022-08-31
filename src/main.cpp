@@ -120,13 +120,16 @@ void play(Output *output, const char *fname)
   ESP_LOGI(TAG, "Finished playing");
 }
 
+
+/*
+
 void main_task_1(void *param)
 {
-  ESP_LOGI(TAG, "Starting up CORE 0");
+  ESP_LOGI(TAG, "Starting up CORE 1");
 
 #ifdef USE_SPIFFS
-  ESP_LOGI(TAG, "Mounting SPIFFS on /sdcard");
-  SPIFFS.begin(true, "/sdcard");
+  //ESP_LOGI(TAG, "Mounting SPIFFS on /sdcard");
+  //SPIFFS.begin(true, "/sdcard");
 #else
   ESP_LOGI(TAG, "Mounting SDCard on /sdcard");
   //new SDCard("/sdcard", PIN_NUM_MISO, PIN_NUM_MOSI, PIN_NUM_CLK, PIN_NUM_CS);
@@ -147,29 +150,57 @@ void main_task_1(void *param)
 
   while (true)
   {
+
+    
+
     // wait for the user to push and hold the button
     wait_for_button_push();
     record(input, "/sdcard/test.wav");
     // wait for the user to push the button again
     wait_for_button_push();
     play(output, "/sdcard/test.wav");
+    
+    ESP_LOGI(TAG, "Doing up CORE 1");
     vTaskDelay(pdMS_TO_TICKS(1000));
   }
 }
+*/
+
+void main_task_1(void *param)
+{
+  //ESP_LOGI(TAG, "Starting up CORE 1");
+
+  int count = 0;
+  while (true)
+  {
+    
+    // wait for the user to push and hold the button
+
+    vTaskDelay(pdMS_TO_TICKS(50));
+    ESP_LOGI(TAG, "Doing up CORE 1");
+  }
+  //Serial.println("1" + count);
+}
+
+
+
 
 
 void main_task_0(void *param)
 {
-  ESP_LOGI(TAG, "Starting up CORE 0");
+  //ESP_LOGI(TAG, "Starting up CORE 0");
 
-
+  int count = 0;
   while (true)
   {
+    //count = count +1 ;
     // wait for the user to push and hold the button
-
-    vTaskDelay(pdMS_TO_TICKS(1000));
-    ESP_LOGI(TAG, "Starting up CORE 0");
+    //Serial.println("0");
+    vTaskDelay(pdMS_TO_TICKS(25));
+    ESP_LOGI(TAG, "Doing up CORE 0");
   }
+  //Serial.println("0" + count);
+  //ESP_LOGI(TAG, "Doing up CORE 0");
 }
 
 String sendSDImageToGoogleDrive(String filepath) 
@@ -285,7 +316,7 @@ void setup()
 
 Serial.begin(115200);
   delay(10);
-  
+  /*
   WiFi.mode(WIFI_STA);
 
   Serial.println("");
@@ -343,21 +374,21 @@ Serial.begin(115200);
   Serial.println();
   
   SD.end();   
-
+*/
   //read a image file from sd card and upload it to Google drive.
-  sendSDImageToGoogleDrive("alba1.jpg");
+  //sendSDImageToGoogleDrive("alba1.jpg");
 
-  Serial.printf("Eso es todo");
+  //Serial.printf("Eso es todo");
 
 
 
 
   //Serial.begin(115200);
   ESP_LOGI(TAG, "Creating main task on CPU0 -> WIFI @ Comms");
-  xTaskCreatePinnedToCore(main_task_0, "Main", 4096, NULL, 0, NULL,0);
+  xTaskCreatePinnedToCore(main_task_0, "Main0", 4096, NULL, 0, NULL,0);
 
   ESP_LOGI(TAG, "Creating main task on CPU1 -> I2S Manager (Microphone @ Speaker");
-  xTaskCreatePinnedToCore(main_task_1, "Main", 4096, NULL, 0, NULL,1);
+  xTaskCreatePinnedToCore(main_task_1, "Main1", 4096, NULL, 0, NULL,1);
 
 }
 
