@@ -1,6 +1,5 @@
 #include <Arduino.h>
-//Dont delete never
- #include <esp32-hal-log.h>
+
 
 
 #include <stdio.h>
@@ -16,6 +15,7 @@
 #include <WAVFileReader.h>
 #include <WAVFileWriter.h>
 #include "config.h"
+
 
 const char* ssid     = "casa1";   
 const char* password = "nike2004";   
@@ -40,9 +40,13 @@ String myImage = "&myFile=";  //Imagen que cargo en el esp32
 
 
 
+
+//Arduino LOGI , don't delete never
+#include <esp32-hal-log.h>
+
 static const char* TAG = "MyModule";
 
-
+// EZBUTTON!!!!!!!!!!!!!!!
 
 
 
