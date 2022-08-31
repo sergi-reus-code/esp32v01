@@ -27,6 +27,7 @@ String myFilename = "&myFilename=ESP32-CAM.jpg";
 String myImage = "&myFile=";  //Imagen que cargo en el esp32
 */
 #include <WiFi.h>
+#include <WiFiMulti.h>
 #include <WiFiClient.h>
 #include "soc/soc.h"            
 #include "soc/rtc_cntl_reg.h"   
@@ -48,6 +49,10 @@ static const char* TAG = "MyModule";
 
 // EZBUTTON!!!!!!!!!!!!!!!
 
+TaskHandle_t Task0;
+TaskHandle_t Task1;
+
+WiFiMulti wifiMulti;
 
 
 void wait_for_button_push()
@@ -166,41 +171,54 @@ void main_task_1(void *param)
 }
 */
 
-void main_task_1(void *param)
-{
-  //ESP_LOGI(TAG, "Starting up CORE 1");
-
-  int count = 0;
+void main_task_1(void *param){
+  Serial.println(" Task1 running on core " + String(xPortGetCoreID()));
   while (true)
   {
-    
-    // wait for the user to push and hold the button
-
-    vTaskDelay(pdMS_TO_TICKS(50));
-    ESP_LOGI(TAG, "Doing up CORE 1");
+    Serial.println(" Task1 running on core " + String(xPortGetCoreID()));
+    vTaskDelay(pdMS_TO_TICKS(356)); 
   }
-  //Serial.println("1" + count);
 }
 
+void main_task_0(void *param){
 
-
-
-
-void main_task_0(void *param)
-{
-  //ESP_LOGI(TAG, "Starting up CORE 0");
-
-  int count = 0;
   while (true)
   {
-    //count = count +1 ;
-    // wait for the user to push and hold the button
-    //Serial.println("0");
-    vTaskDelay(pdMS_TO_TICKS(25));
-    ESP_LOGI(TAG, "Doing up CORE 0");
+  //WiFi.mode(WIFI_STA);
+
+  //Serial.println("");
+  //Serial.print("Connecting to ");
+  //Serial.println(ssid);
+  //WiFi.begin(ssid, password);  
+  
+    //wifiMulti.addAP("ssid_from_AP_1", "your_password_for_AP_1");
+    //wifiMulti.addAP("ssid_from_AP_2", "your_password_for_AP_2");
+    //wifiMulti.addAP("ssid_from_AP_3", "your_password_for_AP_3")
+
+
+
+  long int StartTime=millis();
+  while (WiFi.status() != WL_CONNECTED) 
+  {
+    delay(500);
+    if ((StartTime+10000) < millis()) break;
+  } 
+
+  Serial.println("");
+  Serial.println("STAIP address: ");
+  Serial.println(WiFi.localIP());
+    
+  Serial.println("");
+
+  if (WiFi.status() != WL_CONNECTED) {
+    Serial.println("Reset");
+    delay(25);
+    ESP.restart();   
   }
-  //Serial.println("0" + count);
-  //ESP_LOGI(TAG, "Doing up CORE 0");
+   Serial.println(" Task0 running on core " + String(xPortGetCoreID()));
+   vTaskDelay(pdMS_TO_TICKS(1245));
+  }
+
 }
 
 String sendSDImageToGoogleDrive(String filepath) 
@@ -378,19 +396,19 @@ Serial.begin(115200);
   //read a image file from sd card and upload it to Google drive.
   //sendSDImageToGoogleDrive("alba1.jpg");
 
-  //Serial.printf("Eso es todo");
 
-
-
-
-  //Serial.begin(115200);
   ESP_LOGI(TAG, "Creating main task on CPU0 -> WIFI @ Comms");
-  xTaskCreatePinnedToCore(main_task_0, "Main0", 4096, NULL, 0, NULL,0);
+  xTaskCreatePinnedToCore(main_task_0, "Main0", 4096, NULL, 1, &Task0,0);
 
   ESP_LOGI(TAG, "Creating main task on CPU1 -> I2S Manager (Microphone @ Speaker");
-  xTaskCreatePinnedToCore(main_task_1, "Main1", 4096, NULL, 0, NULL,1);
+  xTaskCreatePinnedToCore(main_task_1, "Main1", 4096, NULL, 1, &Task1,1);
 
 }
 
-void loop()
-{}
+void loop() // Run on core 1
+{
+
+vTaskDelete(NULL);
+
+
+}
