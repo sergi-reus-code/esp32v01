@@ -68,17 +68,17 @@ void record(I2SSampler *input, const char *fname)
   int16_t *samples = (int16_t *)malloc(sizeof(int16_t) * 1024);
   ESP_LOGI(TAG, "Start recording");
   input->start();
-  ESP_LOGI(TAG, "111111");
+  
   // open the file on the sdcard
   FILE *fp = fopen(fname, "wb");
-  ESP_LOGI(TAG, "2222222222");
+  
   // create a new wave file writer
   WAVFileWriter *writer = new WAVFileWriter(fp, input->sample_rate());
-  ESP_LOGI(TAG, "33333333333");
+  
   // keep writing until the user releases the button
   while (gpio_get_level(GPIO_BUTTON) == 1)
   {
-    ESP_LOGI(TAG, "44444444444444");
+    
     int samples_read = input->read(samples, 1024);
     int64_t start = esp_timer_get_time();
     writer->write(samples, samples_read);
@@ -172,6 +172,81 @@ void main_task_1(void *param)
 */
 
 void main_task_1(void *param){
+
+/*
+
+  if(!SD.begin()){
+    Serial.println("Card Mount Failed");
+    return;
+  }
+
+  uint8_t cardType = SD.cardType();
+
+  if(cardType == CARD_NONE){
+    Serial.println("No SD_MMC card attached");
+    SD.end();
+    return;
+  }
+  Serial.println("");
+  Serial.print("SD_MMC Card Type: ");
+  if(cardType == CARD_MMC){
+      Serial.println("MMC");
+  } else if(cardType == CARD_SD){
+      Serial.println("SDSC");
+  } else if(cardType == CARD_SDHC){
+      Serial.println("SDHC");
+  } else {
+      Serial.println("UNKNOWN");
+  }  
+  Serial.printf("SD Card Size: %lluMB\n", SD.cardSize() / (1024 * 1024));
+  Serial.printf("Total space: %lluMB\n", SD.totalBytes() / (1024 * 1024));
+  Serial.printf("Used space: %lluMB\n", SD.usedBytes() / (1024 * 1024));
+  Serial.println();
+  
+  SD.end();   
+
+*/
+
+
+  ESP_LOGI(TAG, "Starting up CORE 1");
+
+  vTaskDelay(500);
+  ESP_LOGI(TAG, "Mounting SDCard on /sdcard");
+  vTaskDelay(500);
+  new SDCard("/sdcard", PIN_NUM_MISO, PIN_NUM_MOSI, PIN_NUM_CLK, PIN_NUM_CS);
+  vTaskDelay(500);    
+
+  ESP_LOGI(TAG, "Creating microphone");
+
+
+  I2SSampler *input = new I2SMEMSSampler(I2S_NUM_0, i2s_mic_pins, i2s_mic_Config);
+
+
+
+  Output *output = new I2SOutput(I2S_NUM_0, i2s_speaker_pins);
+
+
+  gpio_set_direction(GPIO_BUTTON, GPIO_MODE_INPUT);
+  gpio_set_pull_mode(GPIO_BUTTON, GPIO_PULLDOWN_ONLY);
+
+  while (true)
+  {
+
+    
+
+    // wait for the user to push and hold the button
+    wait_for_button_push();
+    record(input, "/sdcard/test.wav");
+    // wait for the user to push the button again
+    wait_for_button_push();
+    play(output, "/sdcard/test.wav");
+    
+    ESP_LOGI(TAG, "Doing up CORE 1");
+    vTaskDelay(pdMS_TO_TICKS(1000));
+  }
+
+
+
   Serial.println(" Task1 running on core " + String(xPortGetCoreID()));
   while (true)
   {
@@ -182,6 +257,10 @@ void main_task_1(void *param){
 
 void main_task_0(void *param){
 
+  
+  
+  
+  
   while (true)
   {
   //WiFi.mode(WIFI_STA);
@@ -201,7 +280,7 @@ void main_task_0(void *param){
   while (WiFi.status() != WL_CONNECTED) 
   {
     delay(500);
-    if ((StartTime+10000) < millis()) break;
+    if ((StartTime+10000) < millis()) break;  //2 segundos
   } 
 
   Serial.println("");
@@ -360,45 +439,17 @@ Serial.begin(115200);
     delay(25);
     ESP.restart();   
   }
-
-
-  
-  if(!SD.begin()){
-    Serial.println("Card Mount Failed");
-    return;
-  }
-
-  uint8_t cardType = SD.cardType();
-
-  if(cardType == CARD_NONE){
-    Serial.println("No SD_MMC card attached");
-    SD.end();
-    return;
-  }
-  Serial.println("");
-  Serial.print("SD_MMC Card Type: ");
-  if(cardType == CARD_MMC){
-      Serial.println("MMC");
-  } else if(cardType == CARD_SD){
-      Serial.println("SDSC");
-  } else if(cardType == CARD_SDHC){
-      Serial.println("SDHC");
-  } else {
-      Serial.println("UNKNOWN");
-  }  
-  Serial.printf("SD Card Size: %lluMB\n", SD.cardSize() / (1024 * 1024));
-  Serial.printf("Total space: %lluMB\n", SD.totalBytes() / (1024 * 1024));
-  Serial.printf("Used space: %lluMB\n", SD.usedBytes() / (1024 * 1024));
-  Serial.println();
-  
-  SD.end();   
 */
+
+  
+
+
   //read a image file from sd card and upload it to Google drive.
   //sendSDImageToGoogleDrive("alba1.jpg");
 
 
   ESP_LOGI(TAG, "Creating main task on CPU0 -> WIFI @ Comms");
-  xTaskCreatePinnedToCore(main_task_0, "Main0", 4096, NULL, 1, &Task0,0);
+  //xTaskCreatePinnedToCore(main_task_0, "Main0", 4096, NULL, 1, &Task0,0);
 
   ESP_LOGI(TAG, "Creating main task on CPU1 -> I2S Manager (Microphone @ Speaker");
   xTaskCreatePinnedToCore(main_task_1, "Main1", 4096, NULL, 1, &Task1,1);
