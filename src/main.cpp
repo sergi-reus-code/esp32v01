@@ -46,7 +46,8 @@ String myImage = "&myFile=";  //Imagen que cargo en el esp32
 #include <esp32-hal-log.h>
 
 static const char* TAG = "MyModule";
-
+touch_pad_t touchPin;
+RTC_DATA_ATTR int bootCount = 0;
 // EZBUTTON!!!!!!!!!!!!!!!
 
 TaskHandle_t Task0;
@@ -255,11 +256,7 @@ void main_task_1(void *param){
 
 void main_task_0(void *param){
 
-  
-  
-  
-  
-  while (true)
+    while (true)
   {
   //WiFi.mode(WIFI_STA);
 
@@ -401,7 +398,20 @@ String sendSDImageToGoogleDrive(String filepath)
 }
 
 
+void callback(){
 
+  if (bootCount == 0)
+  {
+    ++bootCount;
+  
+  } else {
+    
+    //dar de alta semaphoro
+    ++bootCount;
+  
+  }
+
+}
 
 
 
@@ -410,8 +420,9 @@ void setup()
 {
 
 Serial.begin(115200);
-  delay(10);
-  Serial.println("Estoy en el inicio");
+  delay(100);
+
+  Serial.println("Estoy en el inicio  " + String(bootCount));
   
   /*
   WiFi.mode(WIFI_STA);
@@ -449,15 +460,22 @@ Serial.begin(115200);
 
 
   ESP_LOGI(TAG, "Creating main task on CPU0 -> WIFI @ Comms");
-  //xTaskCreatePinnedToCore(main_task_0, "Main0", 4096, NULL, 1, &Task0,0);
+  xTaskCreatePinnedToCore(main_task_0, "Main0", 4096, NULL, 1, &Task0,0);
 
   ESP_LOGI(TAG, "Creating main task on CPU1 -> I2S Manager (Microphone @ Speaker");
   xTaskCreatePinnedToCore(main_task_1, "Main1", 4096, NULL, 1, &Task1,1);
+
+  touchAttachInterrupt(T9, callback, Threshold);
+
+  esp_sleep_enable_touchpad_wakeup();
+  
+  esp_deep_sleep_start();
 
 }
 
 void loop() // Run on core 1
 {
+
 
 vTaskDelete(NULL);
 

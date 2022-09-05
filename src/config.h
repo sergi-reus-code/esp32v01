@@ -3,6 +3,10 @@
 #include <freertos/FreeRTOS.h>
 #include <driver/i2s.h>
 
+
+#define Threshold 40 /* Greater the value, more the sensitivity */
+
+
 // save to SPIFFS instead of SD Card?
 //#define USE_SPIFFS 1
 
