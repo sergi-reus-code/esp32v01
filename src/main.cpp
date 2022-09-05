@@ -208,22 +208,22 @@ void main_task_1(void *param){
 */
 
 
-  ESP_LOGI(TAG, "Starting up CORE 1");
+  //ESP_LOGI(TAG, "Starting up CORE 1");
 
-  vTaskDelay(500);
-  ESP_LOGI(TAG, "Mounting SDCard on /sdcard");
-  vTaskDelay(500);
-  new SDCard("/sdcard", PIN_NUM_MISO, PIN_NUM_MOSI, PIN_NUM_CLK, PIN_NUM_CS);
-  vTaskDelay(500);    
+  //vTaskDelay(500);
+  //ESP_LOGI(TAG, "Mounting SDCard on /sdcard");
+  //vTaskDelay(500);
+  //new SDCard("/sdcard", PIN_NUM_MISO, PIN_NUM_MOSI, PIN_NUM_CLK, PIN_NUM_CS);
+  //vTaskDelay(500);    
 
   ESP_LOGI(TAG, "Creating microphone");
 
 
-  I2SSampler *input = new I2SMEMSSampler(I2S_NUM_0, i2s_mic_pins, i2s_mic_Config);
+  //I2SSampler *input = new I2SMEMSSampler(I2S_NUM_0, i2s_mic_pins, i2s_mic_Config);
 
 
 
-  Output *output = new I2SOutput(I2S_NUM_0, i2s_speaker_pins);
+  //Output *output = new I2SOutput(I2S_NUM_0, i2s_speaker_pins);
 
 
   gpio_set_direction(GPIO_BUTTON, GPIO_MODE_INPUT);
@@ -232,14 +232,17 @@ void main_task_1(void *param){
   while (true)
   {
 
-    
+    Serial.println("Estoy en el bucle 0");
+  
 
     // wait for the user to push and hold the button
     wait_for_button_push();
-    record(input, "/sdcard/test.wav");
+
+     Serial.println("Estoy en el bucle 1");
+    //record(input, "/sdcard/test.wav");
     // wait for the user to push the button again
     wait_for_button_push();
-    play(output, "/sdcard/test.wav");
+    //play(output, "/sdcard/test.wav");
     
     ESP_LOGI(TAG, "Doing up CORE 1");
     vTaskDelay(pdMS_TO_TICKS(1000));
@@ -247,12 +250,7 @@ void main_task_1(void *param){
 
 
 
-  Serial.println(" Task1 running on core " + String(xPortGetCoreID()));
-  while (true)
-  {
-    Serial.println(" Task1 running on core " + String(xPortGetCoreID()));
-    vTaskDelay(pdMS_TO_TICKS(356)); 
-  }
+
 }
 
 void main_task_0(void *param){
@@ -413,6 +411,8 @@ void setup()
 
 Serial.begin(115200);
   delay(10);
+  Serial.println("Estoy en el inicio");
+  
   /*
   WiFi.mode(WIFI_STA);
 
