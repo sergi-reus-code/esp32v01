@@ -469,7 +469,7 @@ Serial.begin(115200);
 
   esp_sleep_enable_touchpad_wakeup();
   
-  esp_deep_sleep_start();
+  //esp_deep_sleep_start();
 
 }
 
