@@ -51,6 +51,10 @@ RTC_DATA_ATTR int bootCount = 0;
 TaskHandle_t Task0;
 TaskHandle_t Task1;
 
+
+SemaphoreHandle_t xSemaphoreGoSleep = NULL;
+
+
 WiFiMulti wifiMulti;
 
 
@@ -207,22 +211,22 @@ void main_task_1(void *param){
 */
 
 
-  //ESP_LOGI(TAG, "Starting up CORE 1");
+  ESP_LOGI(TAG, "Starting up CORE 1");
 
-  //vTaskDelay(500);
-  //ESP_LOGI(TAG, "Mounting SDCard on /sdcard");
-  //vTaskDelay(500);
-  //new SDCard("/sdcard", PIN_NUM_MISO, PIN_NUM_MOSI, PIN_NUM_CLK, PIN_NUM_CS);
+  
+  ESP_LOGI(TAG, "Mounting SDCard on /sdcard");
+  
+  new SDCard("/sdcard", PIN_NUM_MISO, PIN_NUM_MOSI, PIN_NUM_CLK, PIN_NUM_CS);
   //vTaskDelay(500);    
 
   ESP_LOGI(TAG, "Creating microphone");
 
 
-  //I2SSampler *input = new I2SMEMSSampler(I2S_NUM_0, i2s_mic_pins, i2s_mic_Config);
+  I2SSampler *input = new I2SMEMSSampler(I2S_NUM_0, i2s_mic_pins, i2s_mic_Config);
 
 
 
-  //Output *output = new I2SOutput(I2S_NUM_0, i2s_speaker_pins);
+  Output *output = new I2SOutput(I2S_NUM_0, i2s_speaker_pins);
 
 
   gpio_set_direction(GPIO_BUTTON, GPIO_MODE_INPUT);
@@ -254,41 +258,23 @@ void main_task_1(void *param){
 
 void main_task_0(void *param){
 
-    while (true)
-  {
-  //WiFi.mode(WIFI_STA);
+   
+  wifiMulti.addAP("casa1", "nike2004");  //Riu
+  wifiMulti.addAP("MOVISTAR_4EB8", "87DC72A32E66337156AA");  //Puigcerdà
+  wifiMulti.addAP("AndroidAP2C22", "nike2004");  //Mobil
 
-  //Serial.println("");
-  //Serial.print("Connecting to ");
-  //Serial.println(ssid);
-  //WiFi.begin(ssid, password);  
-  
-    //wifiMulti.addAP("ssid_from_AP_1", "your_password_for_AP_1");
-    //wifiMulti.addAP("ssid_from_AP_2", "your_password_for_AP_2");
-    //wifiMulti.addAP("ssid_from_AP_3", "your_password_for_AP_3")
-
-
-
-  long int StartTime=millis();
-  while (WiFi.status() != WL_CONNECTED) 
-  {
-    delay(500);
-    if ((StartTime+10000) < millis()) break;  //2 segundos
-  } 
-
-  Serial.println("");
-  Serial.println("STAIP address: ");
-  Serial.println(WiFi.localIP());
-    
-  Serial.println("");
-
-  if (WiFi.status() != WL_CONNECTED) {
-    Serial.println("Reset");
-    delay(25);
-    ESP.restart();   
+  Serial.println("Connecting Wifi...");
+  if(wifiMulti.run() == WL_CONNECTED) {
+      Serial.println("");
+      Serial.println("WiFi connected");
+      Serial.println("IP address: ");
+      Serial.println(WiFi.localIP());
   }
-   Serial.println(" Task0 running on core " + String(xPortGetCoreID()));
-   vTaskDelay(pdMS_TO_TICKS(1245));
+
+  Serial.println(" Task0 running on core " + String(xPortGetCoreID()));
+
+  while (1){
+      vTaskDelay(10);
   }
 
 }
@@ -396,22 +382,33 @@ String sendSDImageToGoogleDrive(String filepath)
 }
 
 
-void callback(){
+void inicio_cb(){
 
-  if (bootCount == 0)
+  if (bootCount == 0)     //primer inicio
   {
     ++bootCount;
+    vTaskDelay(500);
   
   } else {
     
     //dar de alta semaphoro
     ++bootCount;
-  
+
+
+
+
   }
+
+
+Serial.println("estoy en boot" + String(bootCount) );
 
 }
 
+void goSleep () {
 
+esp_deep_sleep_start();
+
+}
 
 
 
@@ -426,54 +423,32 @@ Serial.begin(115200);
 delay(100);
 Serial.println("Estoy en el inicio  " + String(bootCount));
 
+//xSemaphoreGoSleep = xSemaphoreCreateBinary();
+
+//touchAttachInterrupt(T9, inicio_cb, Threshold);
+
+//esp_sleep_enable_touchpad_wakeup();
+
+//goSleep();
 
 
-  /*
-  WiFi.mode(WIFI_STA);
-
-  Serial.println("");
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
-  WiFi.begin(ssid, password);  
-  
-  long int StartTime=millis();
-  while (WiFi.status() != WL_CONNECTED) 
-  {
-    delay(500);
-    if ((StartTime+10000) < millis()) break;
-  } 
-
-  Serial.println("");
-  Serial.println("STAIP address: ");
-  Serial.println(WiFi.localIP());
-    
-  Serial.println("");
-
-  if (WiFi.status() != WL_CONNECTED) {
-    Serial.println("Reset");
-    delay(25);
-    ESP.restart();   
-  }
-*/
-
-  
+    //read a image file from sd card and upload it to Google drive.
+//sendSDImageToGoogleDrive("alba1.jpg");
 
 
-  //read a image file from sd card and upload it to Google drive.
-  //sendSDImageToGoogleDrive("alba1.jpg");
+//ESP_LOGI(TAG, "Creating main task on CPU0 -> WIFI @ Comms");
+xTaskCreatePinnedToCore(main_task_0, "Main0", 4096, NULL, 1, &Task0,0);
+
+//ESP_LOGI(TAG, "Creating main task on CPU1 -> I2S Manager (Microphone @ Speaker");
+xTaskCreatePinnedToCore(main_task_1, "Main1", 4096, NULL, 1, &Task1,1);
 
 
-  //ESP_LOGI(TAG, "Creating main task on CPU0 -> WIFI @ Comms");
-  //xTaskCreatePinnedToCore(main_task_0, "Main0", 4096, NULL, 1, &Task0,0);
 
-  //ESP_LOGI(TAG, "Creating main task on CPU1 -> I2S Manager (Microphone @ Speaker");
-  //xTaskCreatePinnedToCore(main_task_1, "Main1", 4096, NULL, 1, &Task1,1);
 
-  touchAttachInterrupt(T9, callback, Threshold);
 
-  esp_sleep_enable_touchpad_wakeup();
-  
-  esp_deep_sleep_start();
+
+
+
 
 }
 
