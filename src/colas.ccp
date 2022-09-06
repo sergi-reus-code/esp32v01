@@ -9,7 +9,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
-#include "freertos/heap_regions.h"
+//#include "freertos/heap_regions.h"
 
 #define TAM_COLA 20 /*20 mensajes*/
 #define TAM_MSG 7 /*Cada Mensaje 7 caracteres*/
