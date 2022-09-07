@@ -1,7 +1,5 @@
 #include <Arduino.h>
 
-
-
 #include <stdio.h>
 //#include <FreeRTOS.h>
 #include "freertos/FreeRTOS.h"
@@ -19,13 +17,7 @@
 
 const char* ssid     = "casa1";   
 const char* password = "nike2004";   
-/*
-const char* myDomain = "script.google.com";
-String myScript = "/";    
-String myFoldername = "&myFoldername=ESP32-CAM";    
-String myFilename = "&myFilename=ESP32-CAM.jpg";    
-String myImage = "&myFile=";  //Imagen que cargo en el esp32
-*/
+
 #include <WiFi.h>
 #include <WiFiMulti.h>
 #include <WiFiClient.h>
@@ -176,7 +168,7 @@ void main_task_1(void *param)
 
 void main_task_1(void *param){
 
-/*
+
 
   if(!SD.begin()){
     Serial.println("Card Mount Failed");
@@ -208,7 +200,7 @@ void main_task_1(void *param){
   
   SD.end();   
 
-*/
+
 
 
   ESP_LOGI(TAG, "Starting up CORE 1");
@@ -239,10 +231,10 @@ void main_task_1(void *param){
   
 
     // wait for the user to push and hold the button
-    wait_for_button_push();
+    //wait_for_button_push();
 
      Serial.println("Estoy en el bucle 1");
-    //record(input, "/sdcard/test.wav");
+    record(input, "/sdcard/test.wav");
     // wait for the user to push the button again
     wait_for_button_push();
     //play(output, "/sdcard/test.wav");
