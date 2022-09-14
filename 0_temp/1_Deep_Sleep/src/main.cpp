@@ -64,8 +64,14 @@ void print_wakeup_touchpad(){
   }
 }
 
-void callback(){
-  Serial.println("Start Main Task");
+bool press = false;
+
+void IRAM_ATTR callback(){
+
+  //delay(500);
+  //Serial.println("Start Main Task");
+  //delay(500);
+  press = true;
 }
 
 void setup(){
@@ -84,14 +90,16 @@ void setup(){
   touchAttachInterrupt(T3, callback, Threshold);
 
   //Configure Touchpad as wakeup source
-  esp_sleep_enable_touchpad_wakeup();
+  //esp_sleep_enable_touchpad_wakeup();
 
   //Go to sleep now
-  Serial.println("Going to sleep now");
-  esp_deep_sleep_start();
+  Serial.println("Going to sleep now");delay(2000);
+  //esp_deep_sleep_start();
   Serial.println("This will never be printed");
 }
 
 void loop(){
   //This will never be reached
+  Serial.println(press);
+  delay(1000);
 }
