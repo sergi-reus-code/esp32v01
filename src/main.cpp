@@ -36,9 +36,11 @@ RTC_DATA_ATTR int bootCount = 0;
 // EZBUTTON!!!!!!!!!!!!!!!
 
 
+#include "inote_hal/button/buttonClass.h"
 
+buttonClass myButton;
 
-
+buttonClass *myButton2 = NULL;
 
 TaskHandle_t Task0;
 TaskHandle_t Task1;
@@ -228,7 +230,7 @@ void main_task_1(void *param){
   {
 
     Serial.println("Estoy en el bucle 0");
-  
+ 
 
     // wait for the user to push and hold the button
     //wait_for_button_push();
@@ -250,7 +252,7 @@ void main_task_1(void *param){
 
 void main_task_0(void *param){
 
-   
+   /*
   wifiMulti.addAP("casa1", "nike2004");  //Riu
   wifiMulti.addAP("MOVISTAR_4EB8", "87DC72A32E66337156AA");  //Puigcerdà
   wifiMulti.addAP("AndroidAP2C22", "nike2004");  //Mobil
@@ -267,7 +269,17 @@ void main_task_0(void *param){
 
   while (1){
       vTaskDelay(10);
+  }*/
+
+vTaskDelay(2000);  
+myButton.animalSound();
+buttonClass *myButton2 = new Pig();
+myButton2->animalSound();
+vTaskDelay(100);
+  while (1){
+      vTaskDelay(10);
   }
+
 
 }
 
@@ -415,6 +427,17 @@ Serial.begin(115200);
 delay(100);
 Serial.println("Estoy en el inicio  " + String(bootCount));
 
+
+
+
+
+//buttonClass *myButton2 = new Pig();
+
+//myButton2->animalSound();
+
+//Pig myButton3;
+//myButton3.animalSound();
+
 //xSemaphoreGoSleep = xSemaphoreCreateBinary();
 
 //touchAttachInterrupt(T9, inicio_cb, Threshold);
@@ -432,7 +455,7 @@ Serial.println("Estoy en el inicio  " + String(bootCount));
 xTaskCreatePinnedToCore(main_task_0, "Main0", 4096, NULL, 1, &Task0,0);
 
 //ESP_LOGI(TAG, "Creating main task on CPU1 -> I2S Manager (Microphone @ Speaker");
-xTaskCreatePinnedToCore(main_task_1, "Main1", 4096, NULL, 1, &Task1,1);
+//xTaskCreatePinnedToCore(main_task_1, "Main1", 4096, NULL, 1, &Task1,1);
 
 
 
