@@ -46,16 +46,7 @@ void receiver(void *params)
   }
 }
 
-void mainTask(void *params)
-{
-  Serial.println("En main Task");
-  delay(500);
-  while (true) {
-    Serial.println("Encendiendo microfono");
-    delay(500);
-    xTaskNotify(micHandler, (1 << 1), eSetBits);
-  }
-}
+
 
 void buttonTask(void *params)
 {
@@ -103,6 +94,25 @@ void speakerTask(void *params)
     printf("Orden recivida: %d \n", state);
   }
 }
+
+
+void mainTask(void *params)
+{
+
+  //xTASK_STATUS statustask = NULL;
+  Serial.println("En main Task");
+  delay(500);
+  while (true) {
+
+    Serial.println("L" + (String)eTaskGetState(&micHandler));
+    xTaskNotify(&micHandler, (1 << 1), eSetBits);
+    
+  }
+}
+
+
+
+
 
 
 
