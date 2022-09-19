@@ -27,10 +27,7 @@ const char* password = "nike2004";
 #include "SD.h"             
 #include "Base64.h"    
 
-//Arduino LOGI , don't delete never
-#include <esp32-hal-log.h>
 
-static const char* TAG = "MyModule";
 touch_pad_t touchPin;
 RTC_DATA_ATTR int bootCount = 0;
 // EZBUTTON!!!!!!!!!!!!!!!
@@ -42,8 +39,13 @@ buttonClass myButton;
 
 buttonClass *myButton2 = NULL;
 
-TaskHandle_t Task0;
-TaskHandle_t Task1;
+TaskHandle_t Task0_0;
+TaskHandle_t Task1_0;
+TaskHandle_t Task2_0;
+
+TaskHandle_t Task0_1;
+TaskHandle_t Task1_1;
+TaskHandle_t Task2_1;
 
 
 SemaphoreHandle_t xSemaphoreGoSleep = NULL;
@@ -60,228 +62,140 @@ void wait_for_button_push()
   }
 }
 
-void record(I2SSampler *input, const char *fname)
-{
-  int16_t *samples = (int16_t *)malloc(sizeof(int16_t) * 1024);
-  ESP_LOGI(TAG, "Start recording");
-  input->start();
-  
-  // open the file on the sdcard
-  FILE *fp = fopen(fname, "wb");
-  
-  // create a new wave file writer
-  WAVFileWriter *writer = new WAVFileWriter(fp, input->sample_rate());
-  
-  // keep writing until the user releases the button
-  while (gpio_get_level(GPIO_BUTTON) == 1)
-  {
-    
-    int samples_read = input->read(samples, 1024);
-    int64_t start = esp_timer_get_time();
-    writer->write(samples, samples_read);
-    int64_t end = esp_timer_get_time();
-    ESP_LOGI(TAG, "Wrote %d samples in %lld microseconds", samples_read, end - start);
+
+
+
+
+
+
+
+
+
+
+void main_task_0_0(void *param){
+Serial.println("Starting up 0 in CORE 0");
+  //vTaskDelay(2000);  
+  //myButton.animalSound();
+  //buttonClass *myButton2 = new Pig();
+  //myButton2->animalSound();
+  vTaskDelay(100);
+  while (1){
+      vTaskDelay(100);
   }
-  // stop the input
-  input->stop();
-  // and finish the writing
-  writer->finish();
-  fclose(fp);
-  delete writer;
-  free(samples);
-  ESP_LOGI(TAG, "Finished recording");
 }
 
-void play(Output *output, const char *fname)
+
+void main_task_0_1(void *param)
 {
-  int16_t *samples = (int16_t *)malloc(sizeof(int16_t) * 1024);
-  // open the file on the sdcard
-  FILE *fp = fopen(fname, "rb");
-  // create a new wave file writer
-  WAVFileReader *reader = new WAVFileReader(fp);
-  ESP_LOGI(TAG, "Start playing");
-  output->start(reader->sample_rate());
-  ESP_LOGI(TAG, "Opened wav file");
-  // read until theres no more samples
-  while (true)
-  {
-    int samples_read = reader->read(samples, 1024);
-    if (samples_read == 0)
-    {
-      break;
-    }
-    ESP_LOGI(TAG, "Read %d samples", samples_read);
-    output->write(samples, samples_read);
-    ESP_LOGI(TAG, "Played samples");
+  Serial.println("Starting up 1 in CORE 0");
+  while (1){
+      vTaskDelay(100);
   }
-  // stop the input
-  output->stop();
-  fclose(fp);
-  delete reader;
-  free(samples);
-  ESP_LOGI(TAG, "Finished playing");
 }
+
+
+void main_task_0_2(void *param){
+
+  Serial.println("Starting up 2 in CORE 0");
+  while (1){
+      vTaskDelay(100);
+  }
+
+}
+
+void main_task_1_0(void *param){
+Serial.println("Starting up 0 in CORE 1");
+  //vTaskDelay(2000);  
+  //myButton.animalSound();
+  //buttonClass *myButton2 = new Pig();
+  //myButton2->animalSound();
+  vTaskDelay(100);
+  while (1){
+      vTaskDelay(100);
+  }
+}
+
+
+void main_task_1_1(void *param)
+{
+  Serial.println("Starting up 1 in CORE 1");
+  while (1){
+      vTaskDelay(100);
+  }
+}
+
+
+void main_task_1_2(void *param){
+
+  Serial.println("Starting up 2 in CORE 1");
+  while (1){
+      vTaskDelay(100);
+  }
+
+}
+
+
+void setup() {
+
+  Serial.begin(115200);
+  delay(100);
+
+  //ESP_LOGI(TAG, "Creating main task on CPU0 -> WIFI @ Comms");
+    xTaskCreatePinnedToCore(main_task_0_0, "Main0", 1024, NULL, 1, &Task0_0,0);
+    xTaskCreatePinnedToCore(main_task_0_1, "Main1", 1024, NULL, 1, &Task1_0,0);
+    xTaskCreatePinnedToCore(main_task_0_2, "Main2", 1024, NULL, 1, &Task2_0,0);
+
+  //ESP_LOGI(TAG, "Creating main task on CPU1 -> I2S Manager (Microphone @ Speaker");
+    xTaskCreatePinnedToCore(main_task_1_0, "Main0", 1024, NULL, 1, &Task0_1,1);
+    xTaskCreatePinnedToCore(main_task_1_1, "Main1", 1024, NULL, 1, &Task1_1,1);
+    xTaskCreatePinnedToCore(main_task_1_2, "Main2", 1024, NULL, 1, &Task2_1,1);
+
+
+
+
+
+
+//buttonClass *myButton2 = new Pig();
+
+//myButton2->animalSound();
+
+//Pig myButton3;
+//myButton3.animalSound();
+
+//xSemaphoreGoSleep = xSemaphoreCreateBinary();
+
+//touchAttachInterrupt(T9, inicio_cb, Threshold);
+
+//esp_sleep_enable_touchpad_wakeup();
+
+//goSleep();
+
+
+    //read a image file from sd card and upload it to Google drive.
+//sendSDImageToGoogleDrive("alba1.jpg");
+
+
+
+
+}
+
+void loop() // Run on core 1
+{ vTaskDelete(NULL); }
+
+
 
 
 /*
+void goSleep () {
 
-void main_task_1(void *param)
-{
-  ESP_LOGI(TAG, "Starting up CORE 1");
+esp_deep_sleep_start();
 
-#ifdef USE_SPIFFS
-  //ESP_LOGI(TAG, "Mounting SPIFFS on /sdcard");
-  //SPIFFS.begin(true, "/sdcard");
-#else
-  ESP_LOGI(TAG, "Mounting SDCard on /sdcard");
-  //new SDCard("/sdcard", PIN_NUM_MISO, PIN_NUM_MOSI, PIN_NUM_CLK, PIN_NUM_CS);
-#endif
-
-  ESP_LOGI(TAG, "Creating microphone");
-
-
-  I2SSampler *input = new I2SMEMSSampler(I2S_NUM_0, i2s_mic_pins, i2s_mic_Config);
-
-
-
-  Output *output = new I2SOutput(I2S_NUM_0, i2s_speaker_pins);
-
-
-  gpio_set_direction(GPIO_BUTTON, GPIO_MODE_INPUT);
-  gpio_set_pull_mode(GPIO_BUTTON, GPIO_PULLDOWN_ONLY);
-
-  while (true)
-  {
-
-    
-
-    // wait for the user to push and hold the button
-    wait_for_button_push();
-    record(input, "/sdcard/test.wav");
-    // wait for the user to push the button again
-    wait_for_button_push();
-    play(output, "/sdcard/test.wav");
-    
-    ESP_LOGI(TAG, "Doing up CORE 1");
-    vTaskDelay(pdMS_TO_TICKS(1000));
-  }
 }
 */
 
-void main_task_1(void *param){
 
 
-
-  if(!SD.begin()){
-    Serial.println("Card Mount Failed");
-    return;
-  }
-
-  uint8_t cardType = SD.cardType();
-
-  if(cardType == CARD_NONE){
-    Serial.println("No SD_MMC card attached");
-    SD.end();
-    return;
-  }
-  Serial.println("");
-  Serial.print("SD_MMC Card Type: ");
-  if(cardType == CARD_MMC){
-      Serial.println("MMC");
-  } else if(cardType == CARD_SD){
-      Serial.println("SDSC");
-  } else if(cardType == CARD_SDHC){
-      Serial.println("SDHC");
-  } else {
-      Serial.println("UNKNOWN");
-  }  
-  Serial.printf("SD Card Size: %lluMB\n", SD.cardSize() / (1024 * 1024));
-  Serial.printf("Total space: %lluMB\n", SD.totalBytes() / (1024 * 1024));
-  Serial.printf("Used space: %lluMB\n", SD.usedBytes() / (1024 * 1024));
-  Serial.println();
-  
-  SD.end();   
-
-
-
-
-  ESP_LOGI(TAG, "Starting up CORE 1");
-
-  
-  ESP_LOGI(TAG, "Mounting SDCard on /sdcard");
-  
-  new SDCard("/sdcard", PIN_NUM_MISO, PIN_NUM_MOSI, PIN_NUM_CLK, PIN_NUM_CS);
-  //vTaskDelay(500);    
-
-  ESP_LOGI(TAG, "Creating microphone");
-
-
-  I2SSampler *input = new I2SMEMSSampler(I2S_NUM_0, i2s_mic_pins, i2s_mic_Config);
-
-
-
-  Output *output = new I2SOutput(I2S_NUM_0, i2s_speaker_pins);
-
-
-  gpio_set_direction(GPIO_BUTTON, GPIO_MODE_INPUT);
-  gpio_set_pull_mode(GPIO_BUTTON, GPIO_PULLDOWN_ONLY);
-
-  while (true)
-  {
-
-    Serial.println("Estoy en el bucle 0");
- 
-
-    // wait for the user to push and hold the button
-    //wait_for_button_push();
-
-     Serial.println("Estoy en el bucle 1");
-    record(input, "/sdcard/test.wav");
-    // wait for the user to push the button again
-    wait_for_button_push();
-    //play(output, "/sdcard/test.wav");
-    
-    ESP_LOGI(TAG, "Doing up CORE 1");
-    vTaskDelay(pdMS_TO_TICKS(1000));
-  }
-
-
-
-
-}
-
-void main_task_0(void *param){
-
-   /*
-  wifiMulti.addAP("casa1", "nike2004");  //Riu
-  wifiMulti.addAP("MOVISTAR_4EB8", "87DC72A32E66337156AA");  //Puigcerdà
-  wifiMulti.addAP("AndroidAP2C22", "nike2004");  //Mobil
-
-  Serial.println("Connecting Wifi...");
-  if(wifiMulti.run() == WL_CONNECTED) {
-      Serial.println("");
-      Serial.println("WiFi connected");
-      Serial.println("IP address: ");
-      Serial.println(WiFi.localIP());
-  }
-
-  Serial.println(" Task0 running on core " + String(xPortGetCoreID()));
-
-  while (1){
-      vTaskDelay(10);
-  }*/
-
-vTaskDelay(2000);  
-myButton.animalSound();
-buttonClass *myButton2 = new Pig();
-myButton2->animalSound();
-vTaskDelay(100);
-  while (1){
-      vTaskDelay(10);
-  }
-
-
-}
+/*
 
 String sendSDImageToGoogleDrive(String filepath) 
 {
@@ -386,7 +300,32 @@ String sendSDImageToGoogleDrive(String filepath)
 }
 
 
-void inicio_cb(){
+*/
+
+
+   /*
+  wifiMulti.addAP("casa1", "nike2004");  //Riu
+  wifiMulti.addAP("MOVISTAR_4EB8", "87DC72A32E66337156AA");  //Puigcerdà
+  wifiMulti.addAP("AndroidAP2C22", "nike2004");  //Mobil
+
+  Serial.println("Connecting Wifi...");
+  if(wifiMulti.run() == WL_CONNECTED) {
+      Serial.println("");
+      Serial.println("WiFi connected");
+      Serial.println("IP address: ");
+      Serial.println(WiFi.localIP());
+  }
+
+  Serial.println(" Task0 running on core " + String(xPortGetCoreID()));
+
+  while (1){
+      vTaskDelay(10);
+  }*/
+
+
+  /*
+
+  void inicio_cb(){
 
   if (bootCount == 0)     //primer inicio
   {
@@ -408,70 +347,4 @@ Serial.println("estoy en boot" + String(bootCount) );
 
 }
 
-void goSleep () {
-
-esp_deep_sleep_start();
-
-}
-
-
-
-
-
-
-
-void setup()
-{
-
-Serial.begin(115200);
-delay(100);
-Serial.println("Estoy en el inicio  " + String(bootCount));
-
-
-
-
-
-//buttonClass *myButton2 = new Pig();
-
-//myButton2->animalSound();
-
-//Pig myButton3;
-//myButton3.animalSound();
-
-//xSemaphoreGoSleep = xSemaphoreCreateBinary();
-
-//touchAttachInterrupt(T9, inicio_cb, Threshold);
-
-//esp_sleep_enable_touchpad_wakeup();
-
-//goSleep();
-
-
-    //read a image file from sd card and upload it to Google drive.
-//sendSDImageToGoogleDrive("alba1.jpg");
-
-
-//ESP_LOGI(TAG, "Creating main task on CPU0 -> WIFI @ Comms");
-xTaskCreatePinnedToCore(main_task_0, "Main0", 4096, NULL, 1, &Task0,0);
-
-//ESP_LOGI(TAG, "Creating main task on CPU1 -> I2S Manager (Microphone @ Speaker");
-//xTaskCreatePinnedToCore(main_task_1, "Main1", 4096, NULL, 1, &Task1,1);
-
-
-
-
-
-
-
-
-
-}
-
-void loop() // Run on core 1
-{
-
-
-vTaskDelete(NULL);
-
-
-}
+*/

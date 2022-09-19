@@ -1,82 +1,124 @@
-#include "esp32-hal-log.h"
-
-
-#include "config.h"
-
 #include <Arduino.h>
 
-
-#include <driver/i2s.h>
-#define I2S_WS 15   //15
-#define I2S_SD 32    //13
-#define I2S_SCK 14  //22
-#define I2S_PORT I2S_NUM_0
-#define bufferLen 64
-
-int16_t sBuffer[bufferLen];
+static TaskHandle_t receiverHandler = NULL;
 
 
+#define Threshold 40 /* Greater the value, more the sensitivity */
 
-void i2s_install(){
-  const i2s_config_t i2s_config = {
-    .mode = i2s_mode_t(I2S_MODE_MASTER | I2S_MODE_RX),
-    .sample_rate = 44100,
-    .bits_per_sample = i2s_bits_per_sample_t(16),
-    .channel_format = I2S_CHANNEL_FMT_ONLY_LEFT,
-    .communication_format = i2s_comm_format_t(I2S_COMM_FORMAT_STAND_I2S),
-    .intr_alloc_flags = 0, // default interrupt priority
-    .dma_buf_count = 8,
-    .dma_buf_len = bufferLen,
-    .use_apll = false
-  };
 
-  i2s_driver_install(I2S_PORT, &i2s_config, 0, NULL);
+RTC_DATA_ATTR int inFunction = 0;
+touch_pad_t touchPin;
+
+void callback(){
+  //placeholder callback function
 }
 
-void i2s_setpin(){
-  const i2s_pin_config_t pin_config = {
-    .bck_io_num = I2S_SCK,
-    .ws_io_num = I2S_WS,
-    .data_out_num = -1,
-    .data_in_num = I2S_SD
-  };
 
-  i2s_set_pin(I2S_PORT, &pin_config);
+void goToSleep(){
+  touchAttachInterrupt(T3, callback, Threshold);
+  esp_sleep_enable_touchpad_wakeup();
+  esp_deep_sleep_start();
 }
 
 
 
-
-
-
-
-
-void setup() {
-  Serial.begin(115200);
-  Serial.println("Setup I2S ...");
-
-  delay(1000);
-  i2s_install();
-  i2s_setpin();
-  i2s_start(I2S_PORT);
-  delay(500);
-}
-
-void loop() {
-
-  size_t bytesIn = 0;
-  esp_err_t result = i2s_read(I2S_PORT, &sBuffer, bufferLen, &bytesIn, portMAX_DELAY);
-  if (result == ESP_OK)
+void sender(void *params)
+{
+  while (true)
   {
-    int samples_read = bytesIn / 8;
-    if (samples_read > 0) {
-      float mean = 0;
-      for (int i = 0; i < samples_read; ++i) {
-        mean += (sBuffer[i]);
-      }
-      mean /= samples_read;
-      Serial.println(mean);
-    }
+vTaskDelay(1000/ portTICK_PERIOD_MS);
+
+    
+    Serial.println(eTaskGetState(receiverHandler));
+    xTaskNotify(receiverHandler, (1 << 1), eSetBits);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    
+    xTaskNotify(receiverHandler, (1 << 4), eSetBits);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    goToSleep();
   }
 }
 
+void receiver(void *params)
+{
+  uint state;
+  while (true)
+  {
+    xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
+    Serial.println(eTaskGetState(receiverHandler));
+    printf("received state %d times\n", state);
+
+  }
+}
+
+
+
+void mainFunction(void *params)
+{
+  
+  while (touchRead(T3) < Threshold)
+  {
+    printf("pepepepe");
+
+  }
+  
+
+
+  uint state;
+  while (true)
+  {
+    xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
+    Serial.println(eTaskGetState(receiverHandler));
+    printf("received state %d times\n", state);
+
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void setup(){
+
+  Serial.begin(115200);
+  delay(250); //Take some time to open up the Serial Monitor
+
+  int touchValue = touchRead(T3);
+  Serial.print(touchValue);
+
+  if(touchValue < Threshold){
+    inFunction=1;
+    
+    Serial.println(String(inFunction));
+      xTaskCreatePinnedToCore(&mainFunction, "receiver", 2048, NULL, 2, NULL,0);
+      xTaskCreate(&receiver, "receiver", 2048, NULL, 2, &receiverHandler);
+      xTaskCreate(&sender, "sender", 2048, NULL, 2, NULL);
+
+  }
+  else{
+    inFunction=0;   
+    Serial.println(String(inFunction)); 
+    //Serial.println(" Do nothing");
+    goToSleep();
+  }
+
+
+  
+}
+
+void loop(){
+  //This will never be reached
+}
