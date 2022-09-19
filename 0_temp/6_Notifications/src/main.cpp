@@ -12,7 +12,7 @@ static TaskHandle_t senderHandler = NULL;
 static TaskHandle_t mainHandler = NULL;
 static TaskHandle_t buttonHandler = NULL;
 static TaskHandle_t ledsHandler = NULL;
-static TaskHandle_t micHandler = NULL;
+static TaskHandle_t recordHandler = NULL;
 static TaskHandle_t sdHandler = NULL;
 static TaskHandle_t speakerHandler = NULL;
 
@@ -20,18 +20,21 @@ static TaskHandle_t speakerHandler = NULL;
 
 void sender(void *params)
 {
-//  while (true)   {
-    
-    vTaskDelay(500/ portTICK_PERIOD_MS);
-    //xTaskNotify(receiverHandler, (1 << 0), eSetBits);
+  while (true)   {
+    Serial.print("antes -> ");
     Serial.println(eTaskGetState(receiverHandler));
-    xTaskNotify(receiverHandler, (1 << 1), eSetBits);
-    vTaskDelay(500 / portTICK_PERIOD_MS);
+    xTaskNotify(receiverHandler, (1 << 0), eSetBits);
+    Serial.print("despues -> ");
+    Serial.println(eTaskGetState(receiverHandler));
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    
+    //xTaskNotify(receiverHandler, (1 << 1), eSetBits);
+    //vTaskDelay(1000 / portTICK_PERIOD_MS);
     //xTaskNotify(receiverHandler, (1 << 2), eSetBits);
-    xTaskNotify(receiverHandler, (1 << 4), eSetBits);
-    //vTaskDelay(500 / portTICK_PERIOD_MS);
+    //xTaskNotify(receiverHandler, (1 << 3), eSetBits);
+    
    
- // }
+  }
 }
 
 void receiver(void *params)
@@ -39,9 +42,10 @@ void receiver(void *params)
   uint state;
   while (true)
   {
+    
     xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
-    Serial.println(eTaskGetState(receiverHandler));
-    printf("received state %d times\n", state);
+    
+    //printf("received state %d times\n", state);
 
   }
 }
@@ -66,16 +70,6 @@ void ledsTask(void *params)
   }
 }
 
-void micTask(void *params)
-{
-  uint state;
-  while (true) {
-    printf("Waiting on mic \n");
-    xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
-    printf("Orden recivida: %d \n", state);
-    delay(5000);
-  }
-}
 
 void sdTask(void *params)
 {
@@ -96,16 +90,35 @@ void speakerTask(void *params)
 }
 
 
+void recordTask(void *params)
+{
+  uint state;
+  while (true) {
+    delay(1000);
+    Serial.println("Waiting on mic \n");
+    xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
+    delay(1000);
+    
+    
+  }
+}
+
+
+
+
+
+
 void mainTask(void *params)
 {
 
   //xTASK_STATUS statustask = NULL;
   Serial.println("En main Task");
-  delay(500);
+  
   while (true) {
-
-    Serial.println("L" + (String)eTaskGetState(&micHandler));
-    xTaskNotify(&micHandler, (1 << 1), eSetBits);
+    delay(2000);
+    Serial.println("EEEEEstado de la tarea " + (String)eTaskGetState(&recordHandler));
+    xTaskNotify(&recordHandler, (1 << 1), eSetBits);
+    Serial.println("AAAAAEstado de la tarea " + (String)eTaskGetState(&recordHandler));
     
   }
 }
@@ -123,23 +136,27 @@ void setup(void)
 
 
 static TaskHandle_t mainHandler = NULL;
-static TaskHandle_t buttonHandler = NULL;
-static TaskHandle_t ledsHandler = NULL;
-static TaskHandle_t micHandler = NULL;
-static TaskHandle_t sdHandler = NULL;
-static TaskHandle_t speakerHandler = NULL;
+static TaskHandle_t recordHandler = NULL;
+
+//static TaskHandle_t buttonHandler = NULL;
+//static TaskHandle_t ledsHandler = NULL;
+//static TaskHandle_t sdHandler = NULL;
+//static TaskHandle_t speakerHandler = NULL;
 
 
 
-  //xTaskCreate(&receiver, "receiver", 2048, NULL, 2, &receiverHandler);
-  //xTaskCreate(&sender, "sender", 2048, NULL, 2, &senderHandler);
+//xTaskCreate(&receiver, "receiver", 2048, NULL, 2, &receiverHandler);
+//xTaskCreate(&sender, "sender", 2048, NULL, 2, NULL);
 
-xTaskCreate(&mainTask, "sender", 2048, NULL, 2, &mainHandler);
-xTaskCreate(&buttonTask, "sender", 2048, NULL, 2, &buttonHandler);
-xTaskCreate(&ledsTask, "sender", 2048, NULL, 2, &ledsHandler);
-xTaskCreate(&micTask, "sender", 2048, NULL, 2, &micHandler);
-xTaskCreate(&sdTask, "sender", 2048, NULL, 2, &sdHandler);
-xTaskCreate(&speakerTask, "sender", 2048, NULL, 2, &speakerHandler);
+xTaskCreate(&mainTask, "mainTask", 2048, NULL, 2, &mainHandler);
+xTaskCreate(&recordTask, "recordTask", 2048, NULL, 2, &recordHandler);
+
+
+//xTaskCreate(&buttonTask, "sender", 2048, NULL, 2, &buttonHandler);
+//xTaskCreate(&ledsTask, "sender", 2048, NULL, 2, &ledsHandler);
+
+//xTaskCreate(&sdTask, "sender", 2048, NULL, 2, &sdHandler);
+//xTaskCreate(&speakerTask, "sender", 2048, NULL, 2, &speakerHandler);
 
 //Check todas las tareas estan en bloqued
 
