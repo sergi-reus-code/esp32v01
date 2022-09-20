@@ -6,6 +6,13 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
+
+#include "esp32-hal-log.h"
+
+
+static const char *TAG = "DEEP SLEEP";
+
+
 static TaskHandle_t receiverHandler = NULL;
 static TaskHandle_t senderHandler = NULL;
 
@@ -45,7 +52,7 @@ void receiver(void *params)
     
     xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
     
-    //printf("received state %d times\n", state);
+    printf("received state %d times\n", state);
 
   }
 }
@@ -86,6 +93,7 @@ void speakerTask(void *params)
   while (true) {
     xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
     printf("Orden recivida: %d \n", state);
+    
   }
 }
 
@@ -93,12 +101,16 @@ void speakerTask(void *params)
 void recordTask(void *params)
 {
   uint state;
+  Serial.println("Waiting on mic \n");
   while (true) {
-    delay(1000);
-    Serial.println("Waiting on mic \n");
-    xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
-    delay(1000);
     
+    delay(100);
+    log_i("111111111111111111", TAG);
+    xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
+    log_i("111111111111111111", TAG);
+    delay(100);
+    Serial.println("pepepepeep");
+    delay(100);
     
   }
 }
@@ -113,7 +125,8 @@ void mainTask(void *params)
 
   //xTASK_STATUS statustask = NULL;
   Serial.println("En main Task");
-  
+  log_i("dssadfasdf", TAG);
+  delay(100);
   while (true) {
     delay(2000);
     Serial.println("EEEEEstado de la tarea " + (String)eTaskGetState(&recordHandler));
@@ -145,8 +158,8 @@ static TaskHandle_t recordHandler = NULL;
 
 
 
-//xTaskCreate(&receiver, "receiver", 2048, NULL, 2, &receiverHandler);
-//xTaskCreate(&sender, "sender", 2048, NULL, 2, NULL);
+xTaskCreate(&receiver, "receiver", 2048, NULL, 2, &receiverHandler);
+xTaskCreate(&sender, "sender", 2048, NULL, 2, NULL);
 
 xTaskCreate(&mainTask, "mainTask", 2048, NULL, 2, &mainHandler);
 xTaskCreate(&recordTask, "recordTask", 2048, NULL, 2, &recordHandler);
