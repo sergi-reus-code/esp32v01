@@ -103,7 +103,7 @@ void setup(){
     inFunction=1;
     
     Serial.println(String(inFunction));
-      xTaskCreatePinnedToCore(&mainFunction, "receiver", 2048, NULL, 2, NULL,0);
+      xTaskCreatePinnedToCore(&mainFunction, "receiver", 2048, NULL, 2, NULL,1);
       xTaskCreate(&receiver, "receiver", 2048, NULL, 2, &receiverHandler);
       xTaskCreate(&sender, "sender", 2048, NULL, 2, NULL);
 
