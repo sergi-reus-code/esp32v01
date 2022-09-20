@@ -29,10 +29,8 @@ void sender(void *params)
 {
   while (true)   {
     Serial.print("antes -> ");
-    Serial.println(eTaskGetState(receiverHandler));
     xTaskNotify(receiverHandler, (1 << 0), eSetBits);
     Serial.print("despues -> ");
-    Serial.println(eTaskGetState(receiverHandler));
     vTaskDelay(1000 / portTICK_PERIOD_MS);
     
     //xTaskNotify(receiverHandler, (1 << 1), eSetBits);
@@ -44,18 +42,63 @@ void sender(void *params)
   }
 }
 
+void mainTask(void *params)
+{
+  Serial.println("En main Task");
+  while (true) {
+    Serial.println("EEEEEstado de la tarea ");
+    xTaskNotify(&recordHandler, (1 << 0), eSetBits);
+    Serial.println("AAAAAEstado de la tarea ");
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+  }
+}
+
+
+
+
+
+
+
+
+
+
 void receiver(void *params)
 {
   uint state;
   while (true)
   {
     
-    xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
+    xTaskNotifyWait(0, 0, &state, portMAX_DELAY);
     
     printf("received state %d times\n", state);
 
   }
 }
+
+void recordTask(void *params)
+{
+  uint state;
+  while (true) {
+   
+    
+    xTaskNotifyWait(0, 0, &state, portMAX_DELAY);
+    printf("received state %d times\n", state);
+    
+    
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -98,43 +141,7 @@ void speakerTask(void *params)
 }
 
 
-void recordTask(void *params)
-{
-  uint state;
-  Serial.println("Waiting on mic \n");
-  while (true) {
-    
-    delay(100);
-    log_i("111111111111111111", TAG);
-    xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
-    log_i("111111111111111111", TAG);
-    delay(100);
-    Serial.println("pepepepeep");
-    delay(100);
-    
-  }
-}
 
-
-
-
-
-
-void mainTask(void *params)
-{
-
-  //xTASK_STATUS statustask = NULL;
-  Serial.println("En main Task");
-  log_i("dssadfasdf", TAG);
-  delay(100);
-  while (true) {
-    delay(2000);
-    Serial.println("EEEEEstado de la tarea " + (String)eTaskGetState(&recordHandler));
-    xTaskNotify(&recordHandler, (1 << 1), eSetBits);
-    Serial.println("AAAAAEstado de la tarea " + (String)eTaskGetState(&recordHandler));
-    
-  }
-}
 
 
 
@@ -148,18 +155,9 @@ void setup(void)
   //Crear todas las tareas -> Dentro de las tareas crear los objetos -> Ponerlos en wait
 
 
-static TaskHandle_t mainHandler = NULL;
-static TaskHandle_t recordHandler = NULL;
 
-//static TaskHandle_t buttonHandler = NULL;
-//static TaskHandle_t ledsHandler = NULL;
-//static TaskHandle_t sdHandler = NULL;
-//static TaskHandle_t speakerHandler = NULL;
-
-
-
-xTaskCreate(&receiver, "receiver", 2048, NULL, 2, &receiverHandler);
-xTaskCreate(&sender, "sender", 2048, NULL, 2, NULL);
+//xTaskCreate(&receiver, "receiver", 2048, NULL, 2, &receiverHandler);
+//xTaskCreate(&sender, "sender", 2048, NULL, 2, NULL);
 
 xTaskCreate(&mainTask, "mainTask", 2048, NULL, 2, &mainHandler);
 xTaskCreate(&recordTask, "recordTask", 2048, NULL, 2, &recordHandler);
@@ -194,6 +192,6 @@ xTaskCreate(&recordTask, "recordTask", 2048, NULL, 2, &recordHandler);
 
 void loop(){
 
-    vTaskDelete(NULL);
+    //vTaskDelete(NULL);
 
 }
