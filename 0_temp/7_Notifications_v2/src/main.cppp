@@ -1,0 +1,201 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+
+#include "esp32-hal-log.h"
+static const char *TAG = "MAIN PROGRAM";
+
+static TaskHandle_t receiverHandler1 = NULL; //Leds
+static TaskHandle_t receiverHandler2 = NULL; //Record
+static TaskHandle_t receiverHandler3 = NULL; //SD 
+static TaskHandle_t receiverHandler4 = NULL; //Send&Receiver 
+static TaskHandle_t receiverHandler5 = NULL; //Player
+
+
+void receiver1(void *params)
+{
+  uint state;
+  while (true)
+  {
+    xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
+    printf("received state %d times in receiver LEDS \n", state);
+  }
+}
+
+void receiver2(void *params)
+{
+  uint state;
+  while (true)
+  {
+    xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
+    printf("received state %d times in receiver RECORD \n", state);
+  }
+}
+
+void receiver3(void *params)
+{
+  uint state;
+  while (true)
+  {
+    xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
+    printf("received state %d times in receiver SD \n", state);
+  }
+}
+
+void receiver4(void *params)
+{
+  uint state;
+  while (true)
+  {
+    xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
+    printf("received state %d times in receiver SEND&RECEIVER \n", state);
+  }
+}
+
+void receiver5(void *params)
+{
+  uint state;
+  while (true)
+  {
+    xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
+    printf("received state %d times in receiver PLAYER \n", state);
+  }
+}
+
+
+/*
+
+void sender(void *params)
+{
+  while (true)
+  {
+    xTaskNotify(receiverHandler1, (1 << 0), eSetBits);
+    xTaskNotify(receiverHandler1, (1 << 1), eSetBits);
+    vTaskDelay(100 / portTICK_PERIOD_MS);
+    xTaskNotify(receiverHandler1, (1 << 2), eSetBits);
+    xTaskNotify(receiverHandler1, (1 << 3), eSetBits);
+    vTaskDelay(100 / portTICK_PERIOD_MS);
+
+    xTaskNotify(receiverHandler2, (1 << 0), eSetBits);
+    xTaskNotify(receiverHandler2, (1 << 1), eSetBits);
+    vTaskDelay(100 / portTICK_PERIOD_MS);
+    xTaskNotify(receiverHandler2, (1 << 2), eSetBits);
+    xTaskNotify(receiverHandler2, (1 << 3), eSetBits);
+    vTaskDelay(100 / portTICK_PERIOD_MS);
+
+
+  }
+}
+
+*/
+
+
+
+
+
+
+
+
+
+
+void setup(void)
+{
+  xTaskCreate(&receiver1, "receiver1", 2048, NULL, 2, &receiverHandler1);
+  xTaskCreate(&receiver2, "receiver2", 2048, NULL, 2, &receiverHandler2);
+  xTaskCreate(&receiver3, "receiver3", 2048, NULL, 2, &receiverHandler3);
+  xTaskCreate(&receiver4, "receiver4", 2048, NULL, 2, &receiverHandler4);
+  xTaskCreate(&receiver5, "receiver5", 2048, NULL, 2, &receiverHandler5);
+  
+
+  printf("Inicio programa iNote 2022  \n");
+
+  //check if record task is ready
+
+  xTaskNotify(receiverHandler1, (1 << 0), eSetBits);
+  xTaskNotify(receiverHandler1, (1 << 1), eSetBits);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+  xTaskNotify(receiverHandler1, (1 << 2), eSetBits);
+  xTaskNotify(receiverHandler1, (1 << 3), eSetBits);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+  xTaskNotify(receiverHandler2, (1 << 0), eSetBits);
+  xTaskNotify(receiverHandler2, (1 << 1), eSetBits);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+  xTaskNotify(receiverHandler2, (1 << 2), eSetBits);
+  xTaskNotify(receiverHandler2, (1 << 3), eSetBits);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+  xTaskNotify(receiverHandler3, (1 << 0), eSetBits);
+  xTaskNotify(receiverHandler3, (1 << 1), eSetBits);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+  xTaskNotify(receiverHandler3, (1 << 2), eSetBits);
+  xTaskNotify(receiverHandler3, (1 << 3), eSetBits);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+  xTaskNotify(receiverHandler4, (1 << 0), eSetBits);
+  xTaskNotify(receiverHandler4, (1 << 1), eSetBits);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+  xTaskNotify(receiverHandler4, (1 << 2), eSetBits);
+  xTaskNotify(receiverHandler4, (1 << 3), eSetBits);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+  xTaskNotify(receiverHandler5, (1 << 0), eSetBits);
+  xTaskNotify(receiverHandler5, (1 << 1), eSetBits);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+  xTaskNotify(receiverHandler5, (1 << 2), eSetBits);
+  xTaskNotify(receiverHandler5, (1 << 3), eSetBits);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+
+
+  //xTaskCreate(&sender, "sender", 2048, NULL, 2, NULL);
+}
+
+void loop(){
+    /*
+  //Inicio programa 
+  printf("Inicio programa iNote 2022  \n");
+
+  //check if record task is ready
+
+  xTaskNotify(receiverHandler1, (1 << 0), eSetBits);
+  xTaskNotify(receiverHandler1, (1 << 1), eSetBits);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+  xTaskNotify(receiverHandler1, (1 << 2), eSetBits);
+  xTaskNotify(receiverHandler1, (1 << 3), eSetBits);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+  xTaskNotify(receiverHandler2, (1 << 0), eSetBits);
+  xTaskNotify(receiverHandler2, (1 << 1), eSetBits);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+  xTaskNotify(receiverHandler2, (1 << 2), eSetBits);
+  xTaskNotify(receiverHandler2, (1 << 3), eSetBits);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+  xTaskNotify(receiverHandler3, (1 << 0), eSetBits);
+  xTaskNotify(receiverHandler3, (1 << 1), eSetBits);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+  xTaskNotify(receiverHandler3, (1 << 2), eSetBits);
+  xTaskNotify(receiverHandler3, (1 << 3), eSetBits);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+  xTaskNotify(receiverHandler4, (1 << 0), eSetBits);
+  xTaskNotify(receiverHandler4, (1 << 1), eSetBits);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+  xTaskNotify(receiverHandler4, (1 << 2), eSetBits);
+  xTaskNotify(receiverHandler4, (1 << 3), eSetBits);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+  xTaskNotify(receiverHandler5, (1 << 0), eSetBits);
+  xTaskNotify(receiverHandler5, (1 << 1), eSetBits);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+  xTaskNotify(receiverHandler5, (1 << 2), eSetBits);
+  xTaskNotify(receiverHandler5, (1 << 3), eSetBits);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+*/
+
+
+}
