@@ -1,186 +1,170 @@
-#include <Arduino.h>
-
 #include <stdio.h>
-//#include <FreeRTOS.h>
+#include <stdlib.h>
+#include <string.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include <I2SMEMSSampler.h>
 
-#include <I2SOutput.h>
+#include "classes/led/ledsClass.h"
 
-#include <SDCard.h>
-#include "SPIFFS.h"
-#include <WAVFileReader.h>
-#include <WAVFileWriter.h>
-#include "config.h"
+#include "esp32-hal-log.h"
+static const char *TAG = "MAIN PROGRAM";
 
+static TaskHandle_t ledsHandler = NULL; //Leds
+static TaskHandle_t recordHandler = NULL; //Record
+static TaskHandle_t sdHandler = NULL; //SD 
+static TaskHandle_t commsHandler = NULL; //Comms Send&Receiver 
+static TaskHandle_t playerHandler = NULL; //Player
+static ledsClass ledsObject;
 
-const char* ssid     = "casa1";   
-const char* password = "nike2004";   
-
-#include <WiFi.h>
-#include <WiFiMulti.h>
-#include <WiFiClient.h>
-#include "soc/soc.h"            
-#include "soc/rtc_cntl_reg.h"   
-#include "FS.h"                 
-#include "SD.h"             
-#include "Base64.h"    
-
-
-touch_pad_t touchPin;
-RTC_DATA_ATTR int bootCount = 0;
-// EZBUTTON!!!!!!!!!!!!!!!
-
-
-#include "inote_hal/button/buttonClass.h"
-
-buttonClass myButton;
-
-buttonClass *myButton2 = NULL;
-
-TaskHandle_t Task0_0;
-TaskHandle_t Task1_0;
-TaskHandle_t Task2_0;
-
-TaskHandle_t Task0_1;
-TaskHandle_t Task1_1;
-TaskHandle_t Task2_1;
-
-
-SemaphoreHandle_t xSemaphoreGoSleep = NULL;
-
-
-WiFiMulti wifiMulti;
-
-
-void wait_for_button_push()
+void ledsTask(void *params)
 {
-  while (gpio_get_level(GPIO_BUTTON) == 0)
+  //Creamos el objeto leds
+  ledsObject.animalSound();
+
+  uint state;
+  while (true)
   {
-    vTaskDelay(pdMS_TO_TICKS(100));
+    xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
+    printf("received state %d times in receiver LEDS \n", state);
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-void main_task_0_0(void *param){
-Serial.println("Starting up 0 in CORE 0");
-  //vTaskDelay(2000);  
-  //myButton.animalSound();
-  //buttonClass *myButton2 = new Pig();
-  //myButton2->animalSound();
-  vTaskDelay(100);
-  while (1){
-      vTaskDelay(100);
-  }
-}
-
-
-void main_task_0_1(void *param)
+void recordTask(void *params)
 {
-  Serial.println("Starting up 1 in CORE 0");
-  while (1){
-      vTaskDelay(100);
+  uint state;
+  while (true)
+  {
+    xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
+    printf("received state %d times in receiver RECORD \n", state);
   }
 }
 
-
-void main_task_0_2(void *param){
-
-  Serial.println("Starting up 2 in CORE 0");
-  while (1){
-      vTaskDelay(100);
-  }
-
-}
-
-void main_task_1_0(void *param){
-Serial.println("Starting up 0 in CORE 1");
-  //vTaskDelay(2000);  
-  //myButton.animalSound();
-  //buttonClass *myButton2 = new Pig();
-  //myButton2->animalSound();
-  vTaskDelay(100);
-  while (1){
-      vTaskDelay(100);
-  }
-}
-
-
-void main_task_1_1(void *param)
+void sdTask(void *params)
 {
-  Serial.println("Starting up 1 in CORE 1");
-  while (1){
-      vTaskDelay(100);
+  uint state;
+  while (true)
+  {
+    xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
+    printf("received state %d times in receiver SD \n", state);
+  }
+}
+
+void commsTask(void *params)
+{
+  uint state;
+  while (true)
+  {
+    xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
+    printf("received state %d times in receiver SEND&RECEIVER \n", state);
+  }
+}
+
+void playerTask(void *params)
+{
+  uint state;
+  while (true)
+  {
+    xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
+    printf("received state %d times in receiver PLAYER \n", state);
   }
 }
 
 
-void main_task_1_2(void *param){
+/*
 
-  Serial.println("Starting up 2 in CORE 1");
-  while (1){
-      vTaskDelay(100);
+void sender(void *params)
+{
+  while (true)
+  {
+    xTaskNotify(receiverHandler1, (1 << 0), eSetBits);
+    xTaskNotify(receiverHandler1, (1 << 1), eSetBits);
+    vTaskDelay(100 / portTICK_PERIOD_MS);
+    xTaskNotify(receiverHandler1, (1 << 2), eSetBits);
+    xTaskNotify(receiverHandler1, (1 << 3), eSetBits);
+    vTaskDelay(100 / portTICK_PERIOD_MS);
+
+    xTaskNotify(receiverHandler2, (1 << 0), eSetBits);
+    xTaskNotify(receiverHandler2, (1 << 1), eSetBits);
+    vTaskDelay(100 / portTICK_PERIOD_MS);
+    xTaskNotify(receiverHandler2, (1 << 2), eSetBits);
+    xTaskNotify(receiverHandler2, (1 << 3), eSetBits);
+    vTaskDelay(100 / portTICK_PERIOD_MS);
+
+
   }
-
 }
 
-
-void setup() {
-
-  Serial.begin(115200);
-  delay(100);
-
-  //ESP_LOGI(TAG, "Creating main task on CPU0 -> WIFI @ Comms");
-    xTaskCreatePinnedToCore(main_task_0_0, "Main0", 1024, NULL, 1, &Task0_0,0);
-    xTaskCreatePinnedToCore(main_task_0_1, "Main1", 1024, NULL, 1, &Task1_0,0);
-    xTaskCreatePinnedToCore(main_task_0_2, "Main2", 1024, NULL, 1, &Task2_0,0);
-
-  //ESP_LOGI(TAG, "Creating main task on CPU1 -> I2S Manager (Microphone @ Speaker");
-    xTaskCreatePinnedToCore(main_task_1_0, "Main0", 1024, NULL, 1, &Task0_1,1);
-    xTaskCreatePinnedToCore(main_task_1_1, "Main1", 1024, NULL, 1, &Task1_1,1);
-    xTaskCreatePinnedToCore(main_task_1_2, "Main2", 1024, NULL, 1, &Task2_1,1);
+*/
 
 
 
 
 
 
-//buttonClass *myButton2 = new Pig();
-
-//myButton2->animalSound();
-
-//Pig myButton3;
-//myButton3.animalSound();
-
-//xSemaphoreGoSleep = xSemaphoreCreateBinary();
-
-//touchAttachInterrupt(T9, inicio_cb, Threshold);
-
-//esp_sleep_enable_touchpad_wakeup();
-
-//goSleep();
-
-
-    //read a image file from sd card and upload it to Google drive.
-//sendSDImageToGoogleDrive("alba1.jpg");
 
 
 
 
+void setup(void)
+{
+
+  xTaskCreate(&ledsTask, "receiver1", 2048, NULL, 2, &ledsHandler);
+  xTaskCreate(&recordTask, "receiver2", 2048, NULL, 2, &recordHandler);
+  xTaskCreate(&sdTask, "receiver3", 2048, NULL, 2, &sdHandler);
+  xTaskCreate(&commsTask, "receiver4", 2048, NULL, 2, &commsHandler);
+  xTaskCreate(&playerTask, "receiver5", 2048, NULL, 2, &playerHandler);
+  
+
+  printf("Inicio programa iNote 2022  \n");
+
+  //check if record task is ready
+  vTaskDelay(100);
+
+  xTaskNotify(ledsHandler, (1 << 0), eSetBits);
+  xTaskNotify(ledsHandler, (1 << 1), eSetBits);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+  xTaskNotify(ledsHandler, (1 << 2), eSetBits);
+  xTaskNotify(ledsHandler, (1 << 3), eSetBits);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+  xTaskNotify(recordHandler, (1 << 0), eSetBits);
+  xTaskNotify(recordHandler, (1 << 1), eSetBits);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+  xTaskNotify(recordHandler, (1 << 2), eSetBits);
+  xTaskNotify(recordHandler, (1 << 3), eSetBits);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+  xTaskNotify(sdHandler, (1 << 0), eSetBits);
+  xTaskNotify(sdHandler, (1 << 1), eSetBits);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+  xTaskNotify(sdHandler, (1 << 2), eSetBits);
+  xTaskNotify(sdHandler, (1 << 3), eSetBits);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+  xTaskNotify(commsHandler, (1 << 0), eSetBits);
+  xTaskNotify(commsHandler, (1 << 1), eSetBits);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+  xTaskNotify(commsHandler, (1 << 2), eSetBits);
+  xTaskNotify(commsHandler, (1 << 3), eSetBits);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+  xTaskNotify(playerHandler, (1 << 0), eSetBits);
+  xTaskNotify(playerHandler, (1 << 1), eSetBits);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+  xTaskNotify(playerHandler, (1 << 2), eSetBits);
+  xTaskNotify(playerHandler, (1 << 3), eSetBits);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+
+
+  //xTaskCreate(&sender, "sender", 2048, NULL, 2, NULL);
 }
 
-void loop() // Run on core 1
-{ vTaskDelete(NULL); }
+void loop(){
+    
+vTaskDelete(NULL);
+
+}
 
 
 

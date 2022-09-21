@@ -1,11 +1,12 @@
 #pragma once
 
 #include <Arduino.h>
-
+static const char* TAG = "MyModule";
 class buttonClass {
   public:
     //
-    buttonClass(){Serial.println("En constructor de base");};
+    buttonClass(){Serial.println("En constructor de base");
+    ESP_LOGI(TAG, "Starting up");};
     
     void animalSound() {
         Serial.println("Sound of base");
