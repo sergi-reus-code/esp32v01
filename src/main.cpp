@@ -32,18 +32,18 @@ void mainTask(void *params)
 {
 
   // 1. Hacer round leds
-  xTaskNotify(ledsHandler, (1 << 0), eSetBits);
+  xTaskNotify(ledsHandler, (1 << 0), eSetValueWithOverwrite);
   
   // 2. Record sound & Store on SD
-  xTaskNotify(recordHandler, (1 << 0), eSetBits);
-  xTaskNotify(sdHandler, (1 << 0), eSetBits);  
+  xTaskNotify(recordHandler, (1 << 0), eSetValueWithOverwrite);
+  xTaskNotify(sdHandler, (1 << 0), eSetValueWithOverwrite);  
 
   // 3. Send to server & Receive response & Store to SD
-  xTaskNotify(commsHandler, (1 << 0), eSetBits);
-  xTaskNotify(sdHandler, (1 << 0), eSetBits);  
+  xTaskNotify(commsHandler, (1 << 0), eSetValueWithOverwrite);
+  xTaskNotify(sdHandler, (1 << 0), eSetValueWithOverwrite);  
   
   // 4. Play de response
-    xTaskNotify(playerHandler, (1 << 0), eSetBits);
+    xTaskNotify(playerHandler, (1 << 0), eSetValueWithOverwrite);
 
   // 5. Check if interaction is done (Close/Repeat) 
    
