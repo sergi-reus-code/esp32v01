@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,45 +20,74 @@ static TaskHandle_t commsHandler = NULL; //Comms Send&Receiver
 static TaskHandle_t playerHandler = NULL; //Player
 static TaskHandle_t mainHandler = NULL; // Main program
  
+RTC_DATA_ATTR int bootCount = 0;
+#define Threshold 40 /* Greater the value, more the sensitivity */
 
-
-
-
+void callback(){
+  //placeholder callback function
+}
 
 
 void mainTask(void *params)
 {
-  while (true) {
-  
-  //check if record task is ready
-  vTaskDelay(100);
 
+  // 1. Hacer round leds
   xTaskNotify(ledsHandler, (1 << 0), eSetBits);
-
-  vTaskDelay(1000 / portTICK_PERIOD_MS);
-
+  
+  // 2. Record sound & Store on SD
   xTaskNotify(recordHandler, (1 << 0), eSetBits);
+  xTaskNotify(sdHandler, (1 << 0), eSetBits);  
 
-  vTaskDelay(1000 / portTICK_PERIOD_MS);
-
-  xTaskNotify(sdHandler, (1 << 0), eSetBits);
-
-  vTaskDelay(1000 / portTICK_PERIOD_MS);
-
+  // 3. Send to server & Receive response & Store to SD
   xTaskNotify(commsHandler, (1 << 0), eSetBits);
+  xTaskNotify(sdHandler, (1 << 0), eSetBits);  
+  
+  // 4. Play de response
+    xTaskNotify(playerHandler, (1 << 0), eSetBits);
 
-  vTaskDelay(1000 / portTICK_PERIOD_MS);
-
-  xTaskNotify(playerHandler, (1 << 3), eSetBits);
-
-  vTaskDelay(1000 / portTICK_PERIOD_MS);
+  // 5. Check if interaction is done (Close/Repeat) 
+   
 
 
 
+
+
+
+
+
+  
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+  //Check all done
+
+  
+
+  
+  printf("Bona nit.....");
+  vTaskDelay(2000);
+  esp_deep_sleep_start();
+  
   //xTaskCreate(&sender, "sender", 2048, NULL, 2, NULL);
-  return;
+  //return;
 
-  }
+  
+
+
+
+
+
+
 }
 
 
@@ -72,7 +103,18 @@ void mainTask(void *params)
 
 void setup(void)
 {
+ 
+  ++bootCount;
 
+
+
+    //Setup interrupt on Touch Pad 3 (GPIO15)
+  touchAttachInterrupt(T3, callback, Threshold);
+
+  //Configure Touchpad as wakeup source
+  esp_sleep_enable_touchpad_wakeup();
+  
+  
   vTaskDelay(100); // only to take time to print on Serial
   printf("Inicio programa iNote 2022  \n");
   
@@ -82,8 +124,10 @@ void setup(void)
   xTaskCreatePinnedToCore(&sdTask, "sdTask", 2048, NULL, 2, &sdHandler,1);
   xTaskCreatePinnedToCore(&commsTask, "commsTask", 2048, NULL, 2, &commsHandler,0);
   xTaskCreatePinnedToCore(&playerTask, "playerTask", 2048, NULL, 2, &playerHandler,1);
-  
+  vTaskDelay(100 / portTICK_PERIOD_MS);
   xTaskCreatePinnedToCore(&mainTask, "main", 2048, NULL, 2, &mainHandler,1);
+
+
 
   
 }
