@@ -71,10 +71,12 @@ void mainTask(void *params)
 
   //Check all done
 
-  
+
 
   
-  printf("Bona nit.....");
+  printf("Bona nit.....\n");
+  
+  printf("Bona nit.....\n");
   vTaskDelay(2000);
   esp_deep_sleep_start();
   
