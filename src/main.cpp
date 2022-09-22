@@ -31,22 +31,61 @@ void callback(){
 void mainTask(void *params)
 {
 
+
+  int tread1 = touchRead(T3);
+  vTaskDelay(1000);
+  int tread2 = touchRead(T3);
+
+  if ((tread1 < Threshold) && (tread2 < Threshold) )
+  {
+    printf("Start recording\n");
+
   // 1. Hacer round leds
   xTaskNotify(ledsHandler, (1 << 0), eSetBits);
   
+
+
   // 2. Record sound & Store on SD
   xTaskNotify(recordHandler, (1 << 0), eSetBits);
-  xTaskNotify(sdHandler, (1 << 0), eSetBits);  
 
+
+
+
+    while (true) {
+
+
+
+
+  //vTaskDelay(1000);
+
+  //xTaskNotify(sdHandler, (1 << 0), eSetBits);  
+  //vTaskDelay(1000);
   // 3. Send to server & Receive response & Store to SD
-  xTaskNotify(commsHandler, (1 << 0), eSetBits);
-  xTaskNotify(sdHandler, (1 << 0), eSetBits);  
-  
+  //xTaskNotify(commsHandler, (1 << 0), eSetBits);
+  //xTaskNotify(sdHandler, (1 << 0), eSetBits);  
+  vTaskDelay(1000);
   // 4. Play de response
-    xTaskNotify(playerHandler, (1 << 0), eSetBits);
-
+  //xTaskNotify(playerHandler, (1 << 0), eSetBits);
+  vTaskDelay(1000);
   // 5. Check if interaction is done (Close/Repeat) 
-   
+  
+  
+  
+  //break;
+  }
+  printf("Bona nit.....\n");
+  
+  esp_deep_sleep_start();
+  }
+  else
+  {
+      
+  
+  printf("Bona nit.....\n");
+  
+  esp_deep_sleep_start();
+  }
+  
 
 
 
@@ -74,21 +113,6 @@ void mainTask(void *params)
 
 
   
-  printf("Bona nit.....\n");
-  
-  printf("Bona nit.....\n");
-  vTaskDelay(2000);
-  esp_deep_sleep_start();
-  
-  //xTaskCreate(&sender, "sender", 2048, NULL, 2, NULL);
-  //return;
-
-  
-
-
-
-
-
 
 }
 
@@ -143,122 +167,9 @@ vTaskDelete(NULL);
 
 
 
-/*
-void goSleep () {
-
-esp_deep_sleep_start();
-
-}
-*/
 
 
 
-/*
-
-String sendSDImageToGoogleDrive(String filepath) 
-{
-  if(!SD.begin()){
-    Serial.println("Card Mount Failed");
-    return "";
-  }  
-  
-  fs::FS &fs = SD;
-  File file = fs.open("/" + filepath);
-  if(!file){
-    Serial.println("Failed to open file for reading");
-    SD.end();  
-    return "";  
-  }
-  Serial.println("Read from file: "+filepath);
-  Serial.println("file size: "+String(file.size()));
-  Serial.println("");
-  
-  const char* myDomain = "http://192.168.18.5:3001/upload/";
-  String getAll="", getBody = "";
-
-  Serial.println("Connect to " + String(myDomain));
-  WiFiClient client_tcp;
-  
-  if (client_tcp.connect("192.168.18.5", 3001)) {  
-  
-    client_tcp.println("POST /upload HTTP/1.1");
-    client_tcp.println("Host: " + String(myDomain));
-    client_tcp.println("Content-Length: " + String(file.size()));
-    client_tcp.println("Content-Type: application/octet-stream");
-    client_tcp.println("File: " + filepath);
-    client_tcp.println("Connection: keep-alive");
-    client_tcp.println();
-
-        int len = 0;
-        int total = 0;
-        uint8_t buf[1025] = {};
-        size_t _len = 256;
-        do {
-            len = file.read(buf, _len);
-            client_tcp.write(buf, len);
-            total += len;
-        } while (len > 0);
-
-
-        client_tcp.println();
-
-  File filew = fs.open("/resp.jpg",FILE_WRITE);
-  if(!filew){
-    Serial.println("Failed to open file for reading");
-    SD.end();  
-    
-  }
-
-   //Wait for response
-    
-    int waitTime = 10000;   // timeout 10 seconds
-    long startTime = millis();
-    boolean state = false;
-    
-    while ((startTime + waitTime) > millis())
-    {
-      Serial.print(".");
-      delay(100); 
-
-        
-      while (client_tcp.available()) 
-      {
-          char c = client_tcp.read();
-          
-          if (state==true) {
-              filew.print(c);
-              getBody += String(c);}        
-          if (c == '\n') 
-          {
-            if (getAll.length()==0) state=true; 
-            getAll = "";
-          } 
-          else if (c != '\r')
-            getAll += String(c);
-          startTime = millis();
-       }
-       if (getBody.length()>0) break;
-    }
-    client_tcp.stop();
-    //Serial.println(getBody);
-    filew.close();
-
-
-   Serial.println("Guardar en archivo Wav");
-
-
-  }
-  else {
-    getBody="Connected to " + String(myDomain) + " failed.";
-    Serial.println("Connected to " + String(myDomain) + " failed.");
-  }
-  
-  return getBody;
-
-}
-
-
-*/
 
 
    /*
@@ -280,29 +191,3 @@ String sendSDImageToGoogleDrive(String filepath)
       vTaskDelay(10);
   }*/
 
-
-  /*
-
-  void inicio_cb(){
-
-  if (bootCount == 0)     //primer inicio
-  {
-    ++bootCount;
-    vTaskDelay(500);
-  
-  } else {
-    
-    //dar de alta semaphoro
-    ++bootCount;
-
-
-
-
-  }
-
-
-Serial.println("estoy en boot" + String(bootCount) );
-
-}
-
-*/
