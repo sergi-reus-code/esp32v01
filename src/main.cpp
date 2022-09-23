@@ -5,7 +5,9 @@
 #include <string.h>
 
 //#include "esp_sleep.h"
-#include "esp_log.h"
+//#define LOG_LOCAL_LEVEL ESP_LOG_VERBOSE
+//#include "esp_log.h"
+//#include "esp32-hal-log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
@@ -44,7 +46,7 @@ void mainTask(void *params)
 
   if ((tread1 < Threshold) && (tread2 < Threshold) )
   {
-    printf("Start recording\n");
+    //printf("Start recording\n");
 
   // 1. Hacer round leds
   xTaskNotify(ledsHandler, (1 << 0), eSetValueWithOverwrite);
@@ -89,7 +91,7 @@ void mainTask(void *params)
   
   //break;
   }
-  printf("Bona nit.....\n");
+  //printf("Bona nit.....\n");
   
   esp_deep_sleep_start();
   }
@@ -97,7 +99,7 @@ void mainTask(void *params)
   {
       
   
-  printf("Bona nit.....\n");
+  //printf("Bona nit.....\n");
   
   esp_deep_sleep_start();
   }
@@ -158,7 +160,7 @@ void setup(void)
   
   
   vTaskDelay(100); // only to take time to print on Serial
-  printf("Inicio programa iNote 2022  \n");
+  //printf("Inicio programa iNote 2022  \n");
 
   ESP_LOGI(TAG, "Starting up");
   

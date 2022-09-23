@@ -12,7 +12,7 @@ class ledsClass {
     }
 
     void animalSound() {
-         printf("en animal sound \n");
+         //printf("en animal sound \n");
       //cout << "The animal makes a sound \n";
     };
 };
@@ -20,9 +20,10 @@ class ledsClass {
 // Derived class
 class leds2 : public ledsClass {
   public:
-  leds2(){printf("en animal sound \n");};
+  leds2(){//printf("en animal sound \n");
+  };
     void animalSound() {
-      printf("en animal sound \n");
+      //printf("en animal sound \n");
     }
 };
 

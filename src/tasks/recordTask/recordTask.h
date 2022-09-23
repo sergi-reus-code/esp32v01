@@ -22,7 +22,7 @@ void recordTask(void *params)
 
     
     xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
-    printf("received state %d times in receiver RECORD \n", state);
+    //printf("received state %d times in receiver RECORD \n", state);
     //TaskHandle_t recordHand = xTaskGetHandle("recordTask");
     //xTaskNotify(recordHand, (1 << 0), eSetBits);
     if (state == 1) {

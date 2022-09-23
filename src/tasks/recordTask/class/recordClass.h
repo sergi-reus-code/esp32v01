@@ -12,7 +12,7 @@ class recordClass {
     }
 
     void animalSound() {
-         printf("en animal sound \n");
+         //printf("en animal sound \n");
       //cout << "The animal makes a sound \n";
     };
 };
@@ -20,9 +20,10 @@ class recordClass {
 // Derived class
 class record2 : public recordClass {
   public:
-  record2(){printf("en animal sound \n");};
+  record2(){//printf("en animal sound \n");
+  };
     void animalSound() {
-      printf("en animal sound \n");
+      //printf("en animal sound \n");
     }
 };
 

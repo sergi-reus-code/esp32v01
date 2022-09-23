@@ -12,7 +12,7 @@ class commsClass {
     }
 
     void animalSound() {
-         printf("en animal sound \n");
+         //printf("en animal sound \n");
       //cout << "The animal makes a sound \n";
     };
 };
@@ -20,9 +20,10 @@ class commsClass {
 // Derived class
 class comms2 : public commsClass {
   public:
-  comms2(){printf("en animal sound \n");};
+  comms2(){//printf("en animal sound \n");
+  };
     void animalSound() {
-      printf("en animal sound \n");
+      //printf("en animal sound \n");
     }
 };
 

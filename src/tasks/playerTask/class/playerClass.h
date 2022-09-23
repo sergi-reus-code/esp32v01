@@ -12,7 +12,7 @@ class playerClass {
     }
 
     void animalSound() {
-         printf("en animal sound \n");
+         //printf("en animal sound \n");
       //cout << "The animal makes a sound \n";
     };
 };
@@ -20,9 +20,10 @@ class playerClass {
 // Derived class
 class player2 : public playerClass {
   public:
-  player2(){printf("en animal sound \n");};
+  player2(){//printf("en animal sound \n");
+  };
     void animalSound() {
-      printf("en animal sound \n");
+      //printf("en animal sound \n");
     }
 };
 

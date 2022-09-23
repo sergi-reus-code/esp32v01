@@ -22,7 +22,7 @@ void sdTask(void *params)
 
     
     xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
-    printf("received state %d times in receiver SD \n", state);
+    //printf("received state %d times in receiver SD \n", state);
     //TaskHandle_t recordHand = xTaskGetHandle("recordTask");
     //xTaskNotify(recordHand, (1 << 0), eSetBits);
     if (state == 1) {
