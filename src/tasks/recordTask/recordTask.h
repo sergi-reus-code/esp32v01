@@ -26,10 +26,49 @@ void recordTask(void *params)
     //TaskHandle_t recordHand = xTaskGetHandle("recordTask");
     //xTaskNotify(recordHand, (1 << 0), eSetBits);
     if (state == 1) {
-    
+      
+      while (true) {
+
+           int tread1 = touchRead(T3);
+          if (tread1 < 40)
+          {
+             printf("Sdfasdfasd\n");
+             
+             printf("This is my_int: %d\n", tread1); // long long decimal
+
+             vTaskDelay(500);
+          }
+          else
+          {
+            break;
+          }
+          
+
+
+
+            
+      
+      }
+        
         recordObject->animalSound();
     
     }
+
+    if (state == 2) {
+      
+      
+
+             printf("Estado 2");
+      
+    
+        
+       
+    
+    }
+
+
+
+
   
   }
 }

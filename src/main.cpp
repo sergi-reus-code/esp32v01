@@ -1,8 +1,11 @@
-//#include <Arduino.h>
+#include <Arduino.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+//#include "esp_sleep.h"
+#include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
@@ -23,6 +26,9 @@ static TaskHandle_t mainHandler = NULL; // Main program
 RTC_DATA_ATTR int bootCount = 0;
 #define Threshold 40 /* Greater the value, more the sensitivity */
 
+static const char *TAG = "app";
+
+
 void callback(){
   //placeholder callback function
 }
@@ -31,7 +37,7 @@ void callback(){
 void mainTask(void *params)
 {
 
-
+  
   int tread1 = touchRead(T3);
   vTaskDelay(1000);
   int tread2 = touchRead(T3);
@@ -46,7 +52,6 @@ void mainTask(void *params)
 
 
   // 2. Record sound & Store on SD
-<<<<<<< HEAD
   xTaskNotify(recordHandler, (1 << 0), eSetValueWithOverwrite);
   xTaskNotify(sdHandler, (1 << 0), eSetValueWithOverwrite);  
 
@@ -59,10 +64,6 @@ void mainTask(void *params)
 
   // 5. Check if interaction is done (Close/Repeat) 
    
-=======
-  xTaskNotify(recordHandler, (1 << 0), eSetBits);
-
->>>>>>> 8a9a76809f0a22f081057b61d9415d25ff478849
 
 
 
@@ -158,6 +159,8 @@ void setup(void)
   
   vTaskDelay(100); // only to take time to print on Serial
   printf("Inicio programa iNote 2022  \n");
+
+  ESP_LOGI(TAG, "Starting up");
   
   
   xTaskCreatePinnedToCore(&ledsTask,"asdasd",2048,NULL,1,&ledsHandler,1);

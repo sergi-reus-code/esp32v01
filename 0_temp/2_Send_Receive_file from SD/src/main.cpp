@@ -19,7 +19,7 @@ String myImage = "&myFile=";  //Imagen que cargo en el esp32
 #include "SD.h"             
 #include "Base64.h"            
 
-
+/*
 
 //https://github.com/zenmanenergy/ESP8266-Arduino-Examples/
 String urlencode(String str)
@@ -58,7 +58,7 @@ String urlencode(String str)
 
 
 
-
+*/
 
 
 
