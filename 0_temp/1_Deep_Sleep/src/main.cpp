@@ -24,7 +24,7 @@ static const char *TAG = "DEEP SLEEP";
 RTC_DATA_ATTR int bootCount = 0;
 touch_pad_t touchPin;
 
-
+/*
 void print_wakeup_reason(){
   esp_sleep_wakeup_cause_t wakeup_reason;
 
@@ -40,11 +40,12 @@ void print_wakeup_reason(){
     default : Serial.printf("Wakeup was not caused by deep sleep: %d\n",wakeup_reason); break;
   }
 }
-
+*/
 /*
 Method to print the touchpad by which ESP32
 has been awaken from sleep
 */
+/*
 void print_wakeup_touchpad(){
   touchPin = esp_sleep_get_touchpad_wakeup_status();
 
@@ -63,6 +64,7 @@ void print_wakeup_touchpad(){
     default : Serial.println("Wakeup not by touchpad"); break;
   }
 }
+*/
 
 bool press = false;
 

@@ -8,11 +8,19 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
+#include "driver/touch_sensor.h"
+
 #include "tasks/ledsTask/ledsTask.h"
 #include "tasks/recordTask/recordTask.h"
 #include "tasks/sdTask/sdTask.h"
 #include "tasks/commsTask/commsTask.h"
 #include "tasks/playerTask/playerTask.h"
+
+#include "SDCard.h"
+
+#include "config.h"
+
+
 
 static TaskHandle_t ledsHandler = NULL; //Leds
 static TaskHandle_t recordHandler = NULL; //Record
@@ -30,64 +38,67 @@ static const char *TAG = "MAIN APP";
 
 void mainTask(void *params){
 
-  int tread1 = touchRead(T3);
-  ESP_LOGI(TAG, "Touch read -> %d",tread1);
+  uint16_t touch_value1;
+  uint16_t touch_value2;
+  esp_err_t result = touch_pad_read_raw_data(TOUCH_PAD_NUM3, &touch_value1);
   vTaskDelay(500);
-  int tread2 = touchRead(T3);
-
-  if ((tread1 < Threshold) && (tread2 < Threshold) )
-  {
-    printf("Start recording\n");
-
-                        // 1. Hacer round leds
-                        //xTaskNotify(ledsHandler, (1 << 0), eSetValueWithOverwrite);
-                      
-                        // 2. Record sound & Store on SD
-                        //xTaskNotify(recordHandler, (1 << 0), eSetValueWithOverwrite);
-                        //xTaskNotify(sdHandler, (1 << 0), eSetValueWithOverwrite);  
-
-                        // 3. Send to server & Receive response & Store to SD
-                        //xTaskNotify(commsHandler, (1 << 0), eSetValueWithOverwrite);
-                        //xTaskNotify(sdHandler, (1 << 0), eSetValueWithOverwrite);  
-                      
-                        // 4. Play de response
-                        //xTaskNotify(playerHandler, (1 << 0), eSetValueWithOverwrite);
-
-                        // 5. Check if interaction is done (Close/Repeat) 
-              
-    while (true) {
-
-                          //vTaskDelay(1000);
-
-                          //xTaskNotify(sdHandler, (1 << 0), eSetBits);  
-                          //vTaskDelay(1000);
-                          // 3. Send to server & Receive response & Store to SD
-                          //xTaskNotify(commsHandler, (1 << 0), eSetBits);
-                          //xTaskNotify(sdHandler, (1 << 0), eSetBits);  
-                          //vTaskDelay(1000);
-                          // 4. Play de response
-                          //xTaskNotify(playerHandler, (1 << 0), eSetBits);
-                          //vTaskDelay(1000);
-                          // 5. Check if interaction is done (Close/Repeat) 
+  result = touch_pad_read_raw_data(TOUCH_PAD_NUM3, &touch_value2);
   
-            int tread3 = touchRead(T3);
-            ESP_LOGI(TAG, "Touch read3 -> %d",tread3);
-            vTaskDelay(500);
+ 
+  if ((touch_value1 < Threshold) && (touch_value2 < Threshold) )
+  {
 
-            if(tread3 < Threshold){
 
-              return;
-            }
-    
-       }
-      
+    // 3. Send to server & Receive response & Store to SD
+    //xTaskNotify(commsHandler, (1 << 0), eSetValueWithOverwrite);
+    //xTaskNotify(sdHandler, (1 << 0), eSetValueWithOverwrite);  
+                      
+    // 4. Play de response
+    //xTaskNotify(playerHandler, (1 << 0), eSetValueWithOverwrite);
+
+    // 5. Check if interaction is done (Close/Repeat) 
+              
+
+
+              while (touch_value2 < Threshold) {
+
+                  result = touch_pad_read_raw_data(TOUCH_PAD_NUM3, &touch_value2);
+                  ESP_LOGI(TAG, "gravando");
+                  
+                  // 1. Hacer round leds
+                  //xTaskNotify(ledsHandler, (1 << 0), eSetValueWithOverwrite);
+                  
+                  // 2. Record sound & Store on SD
+                  //xTaskNotify(recordHandler, (1 << 0), eSetValueWithOverwrite);
+                  //xTaskNotify(sdHandler, (1 << 0), eSetValueWithOverwrite);  
+
+
+                  vTaskDelay(500);
+
+
+
+
+
+                       
+                  }
+                  uint state;
+                  xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
+                  ESP_LOGI(TAG, "enviando");
+
+
+
+
+
+esp_deep_sleep_start();
+                  
   }
   else
   {
     ESP_LOGI(TAG, "bona nit else");
     vTaskDelay(1000);
     esp_deep_sleep_start();
-  }
+  } 
+  
   
 }
 
@@ -102,6 +113,10 @@ void setup(void)
 
   vTaskDelay(100); // only to take time to print on Serial
   ESP_LOGI(TAG, "Starting up");
+
+  ESP_LOGI(TAG, "Mounting SDCard on /sdcard");
+  new SDCard("/sdcard", PIN_NUM_MISO, PIN_NUM_MOSI, PIN_NUM_CLK, PIN_NUM_CS);
+
   
   //Setup interrupt on Touch Pad 3 (GPIO15)
   touchAttachInterrupt(T3, callback, Threshold);
@@ -115,7 +130,7 @@ void setup(void)
   xTaskCreatePinnedToCore(&playerTask, "playerTask", 2048, NULL, 2, &playerHandler,1);
   vTaskDelay(100 / portTICK_PERIOD_MS);
   xTaskCreatePinnedToCore(&mainTask, "main", 2048, NULL, 2, &mainHandler,1);
-
+  
 }
 
 

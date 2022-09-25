@@ -1,17 +1,14 @@
-#pragma once
-
 #include <freertos/FreeRTOS.h>
 #include <driver/i2s.h>
-
-
-#define Threshold 40 /* Greater the value, more the sensitivity */
-
 
 // save to SPIFFS instead of SD Card?
 //#define USE_SPIFFS 1
 
 // sample rate for the system
 #define SAMPLE_RATE 16000
+
+// are you using an I2S microphone - comment this out if you want to use an analog mic and ADC input
+#define USE_I2S_MIC_INPUT
 
 // I2S Microphone Settings
 // Which channel is the I2S microphone on? I2S_CHANNEL_FMT_ONLY_LEFT or I2S_CHANNEL_FMT_ONLY_RIGHT
@@ -22,43 +19,22 @@
 #define I2S_MIC_LEFT_RIGHT_CLOCK GPIO_NUM_22
 #define I2S_MIC_SERIAL_DATA GPIO_NUM_21
 
+// Analog Microphone Settings - ADC1_CHANNEL_7 is GPIO35
+#define ADC_MIC_CHANNEL ADC1_CHANNEL_7
+
 // speaker settings
-#define I2S_SPEAKER_SERIAL_CLOCK GPIO_NUM_12            //del 19 paso al 12
+#define I2S_SPEAKER_SERIAL_CLOCK GPIO_NUM_19
 #define I2S_SPEAKER_LEFT_RIGHT_CLOCK GPIO_NUM_27
-#define I2S_SPEAKER_SERIAL_DATA GPIO_NUM_14             //del 18 paso al 14    
+#define I2S_SPEAKER_SERIAL_DATA GPIO_NUM_18
 
 // record button
-#define GPIO_BUTTON GPIO_NUM_34
-
+#define GPIO_BUTTON GPIO_NUM_23
 
 // sdcard
-//#define PIN_NUM_MISO GPIO_NUM_4
-//#define PIN_NUM_CLK GPIO_NUM_14
-//#define PIN_NUM_MOSI GPIO_NUM_15
-//#define PIN_NUM_CS GPIO_NUM_25
-#define PIN_NUM_MISO GPIO_NUM_19
-#define PIN_NUM_CLK GPIO_NUM_18
-#define PIN_NUM_MOSI GPIO_NUM_23
-#define PIN_NUM_CS GPIO_NUM_5
-
-
-
-//#define RTC_DATA_ATTR int bootCountt = 0;
-
-
-
-//#include "esp32-hal-log.h"
-
-
-void wait_for_button_push();
-
-
-
-
-
-
-
-
+#define PIN_NUM_MISO GPIO_NUM_4
+#define PIN_NUM_CLK GPIO_NUM_14
+#define PIN_NUM_MOSI GPIO_NUM_15
+#define PIN_NUM_CS GPIO_NUM_25
 
 
 // i2s config for reading from of I2S
