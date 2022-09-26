@@ -40,9 +40,9 @@ void mainTask(void *params){
 
   uint16_t touch_value1;
   uint16_t touch_value2;
-  esp_err_t result = touch_pad_read_raw_data(TOUCH_PAD_NUM3, &touch_value1);
+  esp_err_t result = touch_pad_read_raw_data(TOUCH_PAD_NUM4, &touch_value1);
   vTaskDelay(500);
-  result = touch_pad_read_raw_data(TOUCH_PAD_NUM3, &touch_value2);
+  result = touch_pad_read_raw_data(TOUCH_PAD_NUM4, &touch_value2);
   
  
   if ((touch_value1 < Threshold) && (touch_value2 < Threshold) )
@@ -62,7 +62,7 @@ void mainTask(void *params){
 
               while (touch_value2 < Threshold) {
 
-                  result = touch_pad_read_raw_data(TOUCH_PAD_NUM3, &touch_value2);
+                  result = touch_pad_read_raw_data(TOUCH_PAD_NUM4, &touch_value2);
                   ESP_LOGI(TAG, "gravando");
                   
                   // 1. Hacer round leds
@@ -119,7 +119,7 @@ void setup(void)
 
   
   //Setup interrupt on Touch Pad 3 (GPIO15)
-  touchAttachInterrupt(T3, callback, Threshold);
+  touchAttachInterrupt(TOUCH_PAD_NUM4, callback, Threshold);
   //Configure Touchpad as wakeup source
   esp_sleep_enable_touchpad_wakeup();
 
