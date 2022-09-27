@@ -175,11 +175,11 @@ ESP_LOGI(TAG, "--------------------> %d", resulto);
 
 
 
-  xTaskCreatePinnedToCore(&ledsTask,"asdasd",2048,NULL,1,&ledsHandler,1);
-  xTaskCreatePinnedToCore(&recordTask, "recordTask", 2048, NULL, 2, &recordHandler,1);
-  xTaskCreatePinnedToCore(&sdTask, "sdTask", 2048, NULL, 2, &sdHandler,1);
-  xTaskCreatePinnedToCore(&commsTask, "commsTask", 2048, NULL, 2, &commsHandler,0);
-  xTaskCreatePinnedToCore(&playerTask, "playerTask", 2048, NULL, 2, &playerHandler,1);
+  //xTaskCreatePinnedToCore(&ledsTask,"ledsTask",2048,NULL,1,&ledsHandler,1);
+  //xTaskCreatePinnedToCore(&recordTask, "recordTask", 2048, NULL, 2, &recordHandler,1);
+  //xTaskCreatePinnedToCore(&sdTask, "sdTask", 2048, NULL, 2, &sdHandler,1);
+  //xTaskCreatePinnedToCore(&commsTask, "commsTask", 2048, NULL, 2, &commsHandler,0);
+  //xTaskCreatePinnedToCore(&playerTask, "playerTask", 2048, NULL, 2, &playerHandler,1);
   vTaskDelay(100 / portTICK_PERIOD_MS);
   xTaskCreatePinnedToCore(&mainTask, "main", 2048, NULL, 2, &mainHandler,1);
   
