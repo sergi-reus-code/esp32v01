@@ -27,7 +27,7 @@ void playerTask(void *params)
     //xTaskNotify(recordHand, (1 << 0), eSetBits);
     if (state == 1) {
     
-        playerObject->animalSound();
+        //playerObject->animalSound();
     
     }
   
