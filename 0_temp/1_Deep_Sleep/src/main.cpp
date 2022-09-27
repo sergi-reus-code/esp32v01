@@ -89,7 +89,7 @@ void setup(){
   //print_wakeup_touchpad();
 
   //Setup interrupt on Touch Pad 3 (GPIO15)
-  touchAttachInterrupt(T3, callback, Threshold);
+  touchAttachInterrupt(T4, callback, Threshold);
 
   //Configure Touchpad as wakeup source
   esp_sleep_enable_touchpad_wakeup();

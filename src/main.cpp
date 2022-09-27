@@ -117,9 +117,12 @@ void setup(void)
   ESP_LOGI(TAG, "Mounting SDCard on /sdcard");
   new SDCard("/sdcard", PIN_NUM_MISO, PIN_NUM_MOSI, PIN_NUM_CLK, PIN_NUM_CS);
 
+  //esp_err_t rr = touch_pad_init();
+  //esp_err_t ss = touch_pad_config(TOUCH_PAD_NUM4,Threshold);
+  //esp_err_t ww = touch_pad_filter_enable();
   
   //Setup interrupt on Touch Pad 3 (GPIO15)
-  touchAttachInterrupt(TOUCH_PAD_NUM4, callback, Threshold);
+  touchAttachInterrupt(T4, callback, Threshold);
   //Configure Touchpad as wakeup source
   esp_sleep_enable_touchpad_wakeup();
 
