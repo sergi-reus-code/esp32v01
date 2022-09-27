@@ -122,9 +122,9 @@ void setup(void)
   //esp_err_t ww = touch_pad_filter_enable();
   
   //Setup interrupt on Touch Pad 3 (GPIO15)
-  touchAttachInterrupt(T4, callback, Threshold);
+  //touchAttachInterrupt(T4, callback, Threshold);
   //Configure Touchpad as wakeup source
-  esp_sleep_enable_touchpad_wakeup();
+  //esp_sleep_enable_touchpad_wakeup();
 
   //xTaskCreatePinnedToCore(&ledsTask,"ledsTask",2048,NULL,1,&ledsHandler,1);
   //xTaskCreatePinnedToCore(&recordTask, "recordTask", 2048, NULL, 2, &recordHandler,1);
