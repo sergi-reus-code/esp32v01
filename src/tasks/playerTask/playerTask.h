@@ -17,11 +17,15 @@ void playerTask(void *params)
   playerClass *playerObject = new playerClass();
  
   uint state;
+
+  
+
+
   while (true)
   {
-
+     playerObject->play();
     
-    xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
+    //xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
     //printf("received state %d times in receiver PLAYER \n", state);
     //TaskHandle_t recordHand = xTaskGetHandle("recordTask");
     //xTaskNotify(recordHand, (1 << 0), eSetBits);

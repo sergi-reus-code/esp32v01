@@ -90,14 +90,14 @@ void mainTask(void *params){
 
 
 
-esp_deep_sleep_start();
+//esp_deep_sleep_start();
                   
   }
   else
   {
     ESP_LOGI(TAG, "bona nit else");
     vTaskDelay(1000);
-    esp_deep_sleep_start();
+    //esp_deep_sleep_start();
   } 
   
   
@@ -179,9 +179,9 @@ ESP_LOGI(TAG, "--------------------> %d", resulto);
   //xTaskCreatePinnedToCore(&recordTask, "recordTask", 2048, NULL, 2, &recordHandler,1);
   //xTaskCreatePinnedToCore(&sdTask, "sdTask", 2048, NULL, 2, &sdHandler,1);
   //xTaskCreatePinnedToCore(&commsTask, "commsTask", 2048, NULL, 2, &commsHandler,0);
-  //xTaskCreatePinnedToCore(&playerTask, "playerTask", 2048, NULL, 2, &playerHandler,1);
+  xTaskCreatePinnedToCore(&playerTask, "playerTask", 4096, NULL, 2, &playerHandler,1);
   vTaskDelay(100 / portTICK_PERIOD_MS);
-  xTaskCreatePinnedToCore(&mainTask, "main", 2048, NULL, 2, &mainHandler,1);
+  //xTaskCreatePinnedToCore(&mainTask, "main", 2048, NULL, 2, &mainHandler,1);
   
 }
 
