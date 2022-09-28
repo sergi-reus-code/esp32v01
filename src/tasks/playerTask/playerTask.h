@@ -17,6 +17,7 @@ void playerTask(void *params)
   playerClass *playerObject = new playerClass();
  
   uint state;
+
   while (true)
   {
 
@@ -27,7 +28,14 @@ void playerTask(void *params)
     //xTaskNotify(recordHand, (1 << 0), eSetBits);
     if (state == 1) {
     
-        //playerObject->animalSound();
+        playerObject->play("/sdcard/test.wav");
+
+        TaskHandle_t mainTaskHandele = xTaskGetHandle("main");
+        TaskHandle_t recordHand = xTaskGetHandle("recordTask");
+
+  
+
+        xTaskNotify(mainTaskHandele, (1 << 0), eSetValueWithOverwrite);
     
     }
   

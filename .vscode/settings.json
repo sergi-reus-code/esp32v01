@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "new": "cpp"
+        "*.ejs": "html",
+        "new": "cpp",
+        "functional": "cpp"
     }
 }
