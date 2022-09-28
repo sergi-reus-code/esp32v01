@@ -28,7 +28,7 @@ static TaskHandle_t commsHandler = NULL; //Comms Send&Receiver
 static TaskHandle_t playerHandler = NULL; //Player
 static TaskHandle_t mainHandler = NULL; // Main program
  
-#define Threshold 40 /* Greater the value, more the sensitivity */
+#define Threshold 15 /* Greater the value, more the sensitivity */
 
 static const char *TAG = "MAIN APP";
 
@@ -90,14 +90,14 @@ void mainTask(void *params){
 
 
 
-//esp_deep_sleep_start();
+esp_deep_sleep_start();
                   
   }
   else
   {
     ESP_LOGI(TAG, "bona nit else");
     vTaskDelay(1000);
-    //esp_deep_sleep_start();
+    esp_deep_sleep_start();
   } 
   
   
@@ -134,17 +134,9 @@ void setup(void)
   //xTaskCreatePinnedToCore(&recordTask, "recordTask", 2048, NULL, 2, &recordHandler,1);
   //xTaskCreatePinnedToCore(&sdTask, "sdTask", 2048, NULL, 2, &sdHandler,1);
   //xTaskCreatePinnedToCore(&commsTask, "commsTask", 2048, NULL, 2, &commsHandler,0);
-<<<<<<< HEAD
   xTaskCreatePinnedToCore(&playerTask, "playerTask", 4096, NULL, 2, &playerHandler,1);
   vTaskDelay(100 / portTICK_PERIOD_MS);
-  //xTaskCreatePinnedToCore(&mainTask, "main", 2048, NULL, 2, &mainHandler,1);
-=======
-  xTaskCreatePinnedToCore(&playerTask, "playerTask", 2048, NULL, 2, &playerHandler,1);
-  vTaskDelay(100 / portTICK_PERIOD_MS);
   xTaskCreatePinnedToCore(&mainTask, "main", 2048, NULL, 2, &mainHandler,1);
-
-  
->>>>>>> 1ea0e456ed3d023d9ebfd0a22b8ffe5d7cd9fdde
   
 }
 

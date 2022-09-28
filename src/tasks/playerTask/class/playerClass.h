@@ -15,15 +15,13 @@ class playerClass
   
   public:
     playerClass(){
-<<<<<<< HEAD
-      
-      
+      I2SOutput *output = new I2SOutput(I2S_NUM_0, i2s_speaker_pins);
+      //play(output, "/sdcard/test.wav");
     };
 
     
     void play();
-
-=======
+    void play(const char *fname);
 
 };
 

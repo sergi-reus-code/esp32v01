@@ -8,7 +8,7 @@
 
 #include "class/playerClass.h"
 
-
+static const char *TAG1 = "PLAYER TASK";
 
 
 void playerTask(void *params)
@@ -17,30 +17,28 @@ void playerTask(void *params)
   playerClass *playerObject = new playerClass();
  
   uint state;
+  TaskHandle_t mainTaskHandele = xTaskGetHandle("main");
+  TaskHandle_t recordHand = xTaskGetHandle("recordTask");
 
-  
 
 
+  ESP_LOGI(TAG1, "111111111 --> %d",state );
+  xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
+  ESP_LOGI(TAG1, "2222222222 --> %d",state );
+  ESP_LOGI(TAG1, "2222222222 --> %d",mainTaskHandele );
+
+  if (state == 1) {
+        playerObject->play("/sdcard/test.wav");
+        if(mainTaskHandele != NULL){
+          xTaskNotify(mainTaskHandele, 0xFF, eSetValueWithOverwrite);
+        }else{
+          printf("NULL pointer\n");
+
+        }
+  }  
+/*
   while (true)
   {
-     playerObject->play();
     
-    //xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
-    //printf("received state %d times in receiver PLAYER \n", state);
-    //TaskHandle_t recordHand = xTaskGetHandle("recordTask");
-    //xTaskNotify(recordHand, (1 << 0), eSetBits);
-    if (state == 1) {
-    
-        playerObject->play("/sdcard/test.wav");
-
-        TaskHandle_t mainTaskHandele = xTaskGetHandle("main");
-        TaskHandle_t recordHand = xTaskGetHandle("recordTask");
-
-  
-
-        xTaskNotify(mainTaskHandele, (1 << 0), eSetValueWithOverwrite);
-    
-    }
-  
-  }
+  }*/
 }

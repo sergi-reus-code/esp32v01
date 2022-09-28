@@ -50,6 +50,8 @@ const char *fname ="/sdcard/test.wav";
 void playerClass::play(const char *fname)
 {
   ESP_LOGI(TAG, "Played samples");
+
+  I2SOutput *output = new I2SOutput(I2S_NUM_0, i2s_speaker_pins);
   /*
   int16_t *samples = (int16_t *)malloc(sizeof(int16_t) * 1024);
   // open the file on the sdcard
