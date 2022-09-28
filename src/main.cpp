@@ -21,7 +21,6 @@
 #include "config.h"
 
 
-
 static TaskHandle_t ledsHandler = NULL; //Leds
 static TaskHandle_t recordHandler = NULL; //Record
 static TaskHandle_t sdHandler = NULL; //SD 
@@ -29,20 +28,20 @@ static TaskHandle_t commsHandler = NULL; //Comms Send&Receiver
 static TaskHandle_t playerHandler = NULL; //Player
 static TaskHandle_t mainHandler = NULL; // Main program
  
-#define Threshold 100 /* Greater the value, more the sensitivity */
+#define Threshold 40 /* Greater the value, more the sensitivity */
 
 static const char *TAG = "MAIN APP";
 
 
 
 
+
+
 void mainTask(void *params){
 
-  uint16_t touch_value1;
-  uint16_t touch_value2;
-  esp_err_t result = touch_pad_read_raw_data(TOUCH_PAD_NUM3, &touch_value1);
+  uint16_t touch_value1 = touchRead(14);
   vTaskDelay(500);
-  result = touch_pad_read_raw_data(TOUCH_PAD_NUM3, &touch_value2);
+  uint16_t touch_value2 = touchRead(14);
   
  
   if ((touch_value1 < Threshold) && (touch_value2 < Threshold) )
@@ -62,7 +61,7 @@ void mainTask(void *params){
 
               while (touch_value2 < Threshold) {
 
-                  result = touch_pad_read_raw_data(TOUCH_PAD_NUM3, &touch_value2);
+                  touch_value2 = touchRead(14);
                   ESP_LOGI(TAG, "gravando");
                   
                   
@@ -85,7 +84,8 @@ void mainTask(void *params){
                   uint state;
                   //xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
                   ESP_LOGI(TAG, "enviando");
-
+                  xTaskNotify(playerHandler, (1 << 0), eSetValueWithOverwrite);
+                  xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
 
 
 
@@ -112,80 +112,45 @@ void IRAM_ATTR callback(){
 void setup(void)
 {
 
+  Serial.begin(115200);
   vTaskDelay(100); // only to take time to print on Serial
   ESP_LOGI(TAG, "Starting up");
 
   ESP_LOGI(TAG, "Mounting SDCard on /sdcard");
   new SDCard("/sdcard", PIN_NUM_MISO, PIN_NUM_MOSI, PIN_NUM_CLK, PIN_NUM_CS);
 
-  //esp_err_t rr = touch_pad_init();
-  //esp_err_t ss = touch_pad_config(TOUCH_PAD_NUM4,Threshold);
-  //esp_err_t ww = touch_pad_filter_enable();
-  
+  Serial.println(touchRead(14));
+  ESP_LOGI(TAG, "Lectura del touchPAD14 --> %d",touchRead(14) );
 
 
 
-  uint16_t touch_value1;
-  uint16_t touch_value2;
+  //Setup interrupt on Touch Pad 6 (GPIO14)
+  touchAttachInterrupt(T6, callback, Threshold);
 
-/*
-static const uint8_t T0 = 4;
-static const uint8_t T1 = 0; NOOP
-static const uint8_t T2 = 2;
-static const uint8_t T3 = 15;
-static const uint8_t T4 = 13;
-static const uint8_t T5 = 12;
-static const uint8_t T6 = 14;
-static const uint8_t T7 = 27;
-static const uint8_t T8 = 33;
-static const uint8_t T9 = 32;
-*/
-
-
-
-
-
-
-ESP_ERROR_CHECK(touch_pad_init());
-
-touch_pad_config(TOUCH_PAD_NUM3, 0);
-#define TOUCHPAD_FILTER_TOUCH_PERIOD (10)
-touch_pad_filter_start(TOUCHPAD_FILTER_TOUCH_PERIOD);
-  esp_err_t result = touch_pad_read_raw_data(TOUCH_PAD_NUM3, &touch_value1);
-  
-  
-  
-  
-  
-  //result = touch_pad_read_raw_data(TOUCH_PAD_NUM3, &touch_value2);
-  ESP_LOGI(TAG, "--------------------> %d", touch_value1);
-  //ESP_LOGI(TAG, "bona nit else %d", touchRead(13)); 
-
-
-
-//fbvnvcnbcvn
-
-  //Setup interrupt on Touch Pad 3 (GPIO15)
-  touchAttachInterrupt(TOUCH_PAD_NUM6, callback, 50);
   //Configure Touchpad as wakeup source
-  esp_err_t resulto = esp_sleep_enable_touchpad_wakeup();
-
-ESP_LOGI(TAG, "--------------------> %d", resulto);
-
-
-
+  esp_sleep_enable_touchpad_wakeup();
 
   //xTaskCreatePinnedToCore(&ledsTask,"ledsTask",2048,NULL,1,&ledsHandler,1);
   //xTaskCreatePinnedToCore(&recordTask, "recordTask", 2048, NULL, 2, &recordHandler,1);
   //xTaskCreatePinnedToCore(&sdTask, "sdTask", 2048, NULL, 2, &sdHandler,1);
   //xTaskCreatePinnedToCore(&commsTask, "commsTask", 2048, NULL, 2, &commsHandler,0);
+<<<<<<< HEAD
   xTaskCreatePinnedToCore(&playerTask, "playerTask", 4096, NULL, 2, &playerHandler,1);
   vTaskDelay(100 / portTICK_PERIOD_MS);
   //xTaskCreatePinnedToCore(&mainTask, "main", 2048, NULL, 2, &mainHandler,1);
+=======
+  xTaskCreatePinnedToCore(&playerTask, "playerTask", 2048, NULL, 2, &playerHandler,1);
+  vTaskDelay(100 / portTICK_PERIOD_MS);
+  xTaskCreatePinnedToCore(&mainTask, "main", 2048, NULL, 2, &mainHandler,1);
+
+  
+>>>>>>> 1ea0e456ed3d023d9ebfd0a22b8ffe5d7cd9fdde
   
 }
 
 
 void loop(){
+
   vTaskDelete(NULL);
+
 }

@@ -15,6 +15,7 @@ class playerClass
   
   public:
     playerClass(){
+<<<<<<< HEAD
       
       
     };
@@ -22,6 +23,7 @@ class playerClass
     
     void play();
 
+=======
 
 };
 

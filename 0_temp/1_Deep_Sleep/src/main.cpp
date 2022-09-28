@@ -80,16 +80,17 @@ void setup(){
   Serial.begin(115200);
   delay(1000); //Take some time to open up the Serial Monitor
 
+
   //Increment boot number and print it every reboot
   ++bootCount;
-  //Serial.println("Boot number: " + String(bootCount));
-
+  Serial.println("Boot number: " + String(bootCount));
+  Serial.println(touchRead(14));
   //Print the wakeup reason for ESP32 and touchpad too
   //print_wakeup_reason();
   //print_wakeup_touchpad();
 
-  //Setup interrupt on Touch Pad 3 (GPIO15)
-  touchAttachInterrupt(T3, callback, Threshold);
+  //Setup interrupt on Touch Pad 6 (GPIO14)
+  touchAttachInterrupt(T6, callback, Threshold);
 
   //Configure Touchpad as wakeup source
   esp_sleep_enable_touchpad_wakeup();
