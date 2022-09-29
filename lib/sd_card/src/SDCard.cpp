@@ -74,7 +74,7 @@ SDCard::SDCard(const char *mount_point, gpio_num_t miso, gpio_num_t mosi, gpio_n
   sdmmc_card_print_info(stdout, m_card);
 }
 
-SDCard::~SDCard()
+SDCard:: ~SDCard()
 {
   // All done, unmount partition and disable SDMMC or SPI peripheral
   esp_vfs_fat_sdcard_unmount(m_mount_point.c_str(), m_card);

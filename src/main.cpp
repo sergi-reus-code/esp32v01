@@ -88,7 +88,11 @@ void mainTask(void *params){
                   xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
 
 
+ESP_LOGI(TAG, "bona nit TUTTO BENNE");
 
+
+
+vTaskDelay(1000);
 
 esp_deep_sleep_start();
                   
@@ -118,7 +122,7 @@ void setup(void)
 
   ESP_LOGI(TAG, "Mounting SDCard on /sdcard");
   new SDCard("/sdcard", PIN_NUM_MISO, PIN_NUM_MOSI, PIN_NUM_CLK, PIN_NUM_CS);
-
+  
   Serial.println(touchRead(14));
   ESP_LOGI(TAG, "Lectura del touchPAD14 --> %d",touchRead(14) );
 
@@ -130,13 +134,13 @@ void setup(void)
   //Configure Touchpad as wakeup source
   esp_sleep_enable_touchpad_wakeup();
 
-  //xTaskCreatePinnedToCore(&ledsTask,"ledsTask",2048,NULL,1,&ledsHandler,1);
-  //xTaskCreatePinnedToCore(&recordTask, "recordTask", 2048, NULL, 2, &recordHandler,1);
-  //xTaskCreatePinnedToCore(&sdTask, "sdTask", 2048, NULL, 2, &sdHandler,1);
-  //xTaskCreatePinnedToCore(&commsTask, "commsTask", 2048, NULL, 2, &commsHandler,0);
+  xTaskCreatePinnedToCore(&ledsTask,"ledsTask",2048,NULL,1,&ledsHandler,1);
+  xTaskCreatePinnedToCore(&recordTask, "recordTask", 2048, NULL, 2, &recordHandler,1);
+  xTaskCreatePinnedToCore(&sdTask, "sdTask", 2048, NULL, 2, &sdHandler,1);
+  xTaskCreatePinnedToCore(&commsTask, "commsTask", 2048, NULL, 2, &commsHandler,0);
   xTaskCreatePinnedToCore(&playerTask, "playerTask", 4096, NULL, 2, &playerHandler,1);
   vTaskDelay(100 / portTICK_PERIOD_MS);
-  xTaskCreatePinnedToCore(&mainTask, "main", 2048, NULL, 2, &mainHandler,1);
+  xTaskCreatePinnedToCore(&mainTask, "mainTask", 2048, NULL, 2, &mainHandler,1);
   
 }
 
