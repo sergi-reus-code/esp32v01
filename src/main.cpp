@@ -73,13 +73,14 @@ void mainTask(void *params)
           xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
         
                   if (state==1){
-                    ESP_LOGI(TAG, "Let's continue to player");
+                    ESP_LOGI(TAG, "Let's continue to sleep");
                     vTaskDelay(1000);
+                    esp_deep_sleep_start();       //este no va aqui
                   } else {
                     ESP_LOGI(TAG, "ERRORRRRRRRRRRRRR ----> MUST BREAK");
                   }
                   
-                  esp_deep_sleep_start();       //este no va aqui
+                  
         }
 
   }
