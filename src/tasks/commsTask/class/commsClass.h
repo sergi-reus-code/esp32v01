@@ -7,23 +7,6 @@
 class commsClass {
   public:
     //
-    commsClass(){
-        printf("en constructor de clase \n");
-    }
-
-    void animalSound() {
-         //printf("en animal sound \n");
-      //cout << "The animal makes a sound \n";
-    };
+    commsClass();
+    void begin() ;
 };
-
-// Derived class
-class comms2 : public commsClass {
-  public:
-  comms2(){//printf("en animal sound \n");
-  };
-    void animalSound() {
-      //printf("en animal sound \n");
-    }
-};
-

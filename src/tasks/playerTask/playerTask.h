@@ -8,53 +8,37 @@
 
 #include "class/playerClass.h"
 
-static const char *TAG1 = "PLAYER TASK";
+static const char *TAGP = "PLAYER TASK";
+
 
 
 void playerTask(void *params)
 {
   //Creamos el objeto leds
   playerClass *playerObject = new playerClass();
- vTaskDelay(1000);
-  uint state;
-  TaskHandle_t mainTaskHa = xTaskGetHandle("mainTask");
-  TaskHandle_t recordHand = xTaskGetHandle("recordTask");
+
+  vTaskDelay(100);
+  
+  TaskHandle_t mainTaskHandle = xTaskGetHandle("mainTask");
+  if(mainTaskHandle == NULL){ ESP_LOGE(TAGP, "Main Handler Null -----> ERROR MUST RESTART");}
+
+  uint state; 
 
 
-
-        if(mainTaskHa != NULL){
-          ESP_LOGI(TAG1, "main no null");
-        }else{
-          ESP_LOGI(TAG1, "main null");
-
-        }
-
-
-                if(recordHand != NULL){
-          ESP_LOGI(TAG1, "record no null");
-        }else{
-          ESP_LOGI(TAG1, "record null");
-
-        }
-
-
-
-
-
-  ESP_LOGI(TAG1, "111111111 --> %d",state );
+  ESP_LOGI(TAGP, "111111111 --> %d",state );
   xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
-  ESP_LOGI(TAG1, "2222222222 --> %d",state );
-  ESP_LOGI(TAG1, "2222222222 --> %d",mainTaskHa );
+  ESP_LOGI(TAGP, "2222222222 --> %d",state );
+  ESP_LOGI(TAGP, "2222222222 --> %d",mainTaskHandle );
 
   if (state == 1) {
         playerObject->play("/sdcard/test.wav");
         //playerObject->play();
-        ESP_LOGI(TAG1, "titititit");
+        ESP_LOGI(TAGP, "titititit");
         //xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
-        if(mainTaskHa != NULL){
-          ESP_LOGI(TAG1, "tatatatatatat");
-          xTaskNotify(mainTaskHa, (1 << 0), eSetValueWithOverwrite);
-          ESP_LOGI(TAG1, "tutututututut");
+        if(mainTaskHandle != NULL){
+          ESP_LOGI(TAGP, "tatatatatatat");
+          xTaskNotify(mainTaskHandle, (1 << 0), eSetValueWithOverwrite);
+          ESP_LOGI(TAGP, "tutututututut");
         }else{
           printf("NULL pointer\n");
 

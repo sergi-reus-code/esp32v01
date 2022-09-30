@@ -8,6 +8,8 @@ WAVFileReader::WAVFileReader(FILE *fp)
     m_fp = fp;
     // read the WAV header
     fread((void *)&m_wav_header, sizeof(wav_header_t), 1, m_fp);
+
+    
     // sanity check the bit depth
     if (m_wav_header.bit_depth != 16)
     {

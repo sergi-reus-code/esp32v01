@@ -1,6 +1,7 @@
 #include <freertos/FreeRTOS.h>
 #include <driver/i2s.h>
 
+
 // save to SPIFFS instead of SD Card?
 //#define USE_SPIFFS 1
 
@@ -35,6 +36,10 @@
 #define PIN_NUM_CLK GPIO_NUM_14
 #define PIN_NUM_MOSI GPIO_NUM_23
 #define PIN_NUM_CS GPIO_NUM_25
+
+#define Threshold 15 /* Greater the value, more the sensitivity */
+
+
 
 
 // i2s config for reading from of I2S

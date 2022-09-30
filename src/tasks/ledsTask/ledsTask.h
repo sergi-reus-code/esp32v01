@@ -8,6 +8,7 @@
 
 #include "class/ledsClass.h"
 
+const char *TAGL = "LED TASK";
 
 
 
@@ -15,20 +16,35 @@ void ledsTask(void *params)
 {
   //Creamos el objeto leds
   ledsClass *ledsObject = new ledsClass();
+
+  vTaskDelay(100);
+  
+  TaskHandle_t mainTaskHandle = xTaskGetHandle("mainTask");
+  if(mainTaskHandle == NULL){ ESP_LOGE(TAGL, "Main Handler Null -----> ERROR MUST RESTART");}
  
   uint state;
+
   while (true)
   {
-
-    
+   
     xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
-    //printf("received state %d times in receiver LEDS \n", state);
-    //TaskHandle_t recordHand = xTaskGetHandle("recordTask");
-    //xTaskNotify(recordHand, (1 << 0), eSetBits);
-    if (state == 1) {
+
+    switch (state)
+    {
+    case 1:
+        ESP_LOGI(TAGL, "Leds -----> 1");
+      break;
     
-        ledsObject->animalSound();
-    
+    case 2:
+        ESP_LOGI(TAGL, "Leds -----> 2");
+      break;
+
+    case 4:
+        ESP_LOGI(TAGL, "Leds -----> 4");
+      break;
+
+    default:
+      break;
     }
   
   }
