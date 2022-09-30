@@ -44,7 +44,7 @@ void mainTask(void *params)
           ESP_LOGI(TAG, "Leds y gravando");
           xTaskNotify(ledsHandler, (1 << 0), eSetValueWithOverwrite);
           xTaskNotify(recordHandler, (1 << 0), eSetValueWithOverwrite);
-          xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
+          //xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
         
                   if (state==1){
                     ESP_LOGI(TAG, "Let's continue to comms");
@@ -57,7 +57,7 @@ void mainTask(void *params)
           ESP_LOGI(TAG, "Leds y comms");
           xTaskNotify(ledsHandler, (1 << 1), eSetValueWithOverwrite);
           xTaskNotify(commsHandler, (1 << 0), eSetValueWithOverwrite);
-          xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
+          //xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
                 
                   if (state==1){
                     ESP_LOGI(TAG, "Let's continue to player");
@@ -70,7 +70,7 @@ void mainTask(void *params)
           ESP_LOGI(TAG, "Leds y reproduciendo");
           xTaskNotify(ledsHandler, (1 << 2), eSetValueWithOverwrite);
           xTaskNotify(playerHandler, (1 << 0), eSetValueWithOverwrite);
-          xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
+          //xTaskNotifyWait(0xffffffff, 0, &state, portMAX_DELAY);
         
                   if (state==1){
                     ESP_LOGI(TAG, "Let's continue to sleep");
@@ -80,14 +80,17 @@ void mainTask(void *params)
                     ESP_LOGI(TAG, "ERRORRRRRRRRRRRRR ----> MUST BREAK");
                   }
                   
-                  
+            finished = false;
+            esp_deep_sleep_start();
+          }
         }
 
-  }
+
+  
   else
   {
     ESP_LOGI(TAG, "bona nit FALSA ALARMA");
-    vTaskDelay(500);
+    vTaskDelay(5000);
     esp_deep_sleep_start();
   }
 }
@@ -105,12 +108,15 @@ void setup(void)
   touchAttachInterrupt(T6, callback, Threshold);                // Setup interrupt on Touch Pad 6 (GPIO14)
   esp_sleep_enable_touchpad_wakeup();                           // Configure Touchpad as wakeup source
 
+
+  xTaskCreatePinnedToCore(&mainTask, "mainTask", 2048, NULL, 2, &mainHandler, 1);
+
   xTaskCreatePinnedToCore(&ledsTask, "ledsTask", 2048, NULL, 1, &ledsHandler, 1);
   xTaskCreatePinnedToCore(&recordTask, "recordTask", 2048, NULL, 2, &recordHandler, 1);
   xTaskCreatePinnedToCore(&commsTask, "commsTask", 2048, NULL, 2, &commsHandler, 0);
   xTaskCreatePinnedToCore(&playerTask, "playerTask", 4096, NULL, 2, &playerHandler, 1);
-  vTaskDelay(100 / portTICK_PERIOD_MS);
-  xTaskCreatePinnedToCore(&mainTask, "mainTask", 2048, NULL, 2, &mainHandler, 1);
+  
+
 }
 
 void loop()

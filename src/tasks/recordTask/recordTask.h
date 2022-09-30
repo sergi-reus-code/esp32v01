@@ -19,7 +19,7 @@ void recordTask(void *params)
   //Creamos el objeto leds
   recordClass *recordObject = new recordClass();
  
-  vTaskDelay(100);
+  vTaskDelay(1000);
   
   TaskHandle_t mainTaskHandle = xTaskGetHandle("mainTask");
   if(mainTaskHandle == NULL){ ESP_LOGE(TAGR, "Main Handler Null -----> ERROR MUST RESTART");}

@@ -17,7 +17,7 @@ void commsTask(void *params)
   //Creamos el objeto leds
   commsClass *commsObject = new commsClass();
 
-  vTaskDelay(100);
+  vTaskDelay(1000);
   
   TaskHandle_t mainTaskHandle = xTaskGetHandle("mainTask");
   if(mainTaskHandle == NULL){ ESP_LOGE(TAGC, "Main Handler Null -----> ERROR MUST RESTART");}

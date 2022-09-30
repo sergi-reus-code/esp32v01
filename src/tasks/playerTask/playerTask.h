@@ -17,7 +17,7 @@ void playerTask(void *params)
   //Creamos el objeto leds
   playerClass *playerObject = new playerClass();
 
-  vTaskDelay(100);
+  vTaskDelay(1000);
   
   TaskHandle_t mainTaskHandle = xTaskGetHandle("mainTask");
   if(mainTaskHandle == NULL){ ESP_LOGE(TAGP, "Main Handler Null -----> ERROR MUST RESTART");}
