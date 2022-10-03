@@ -65,11 +65,13 @@ String urlencode(String str)
 String sendSDImageToGoogleDrive(String filepath) 
 {
 
+
   if(!SD.begin()){
     Serial.println("Card Mount Failed");
     return "";
   }  
-  
+
+
   fs::FS &fs = SD;
   File file = fs.open("/" + filepath);
   if(!file){
