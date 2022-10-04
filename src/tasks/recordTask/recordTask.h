@@ -19,7 +19,14 @@
 
 const char *TAGR = "RECORD TASK";
 
+#include "FS.h"
+#include "SD.h"
+#include "SPI.h"
 
+#define SCK  17
+#define MISO  19
+#define MOSI  23
+#define CS  5
 
 void recordTask(void *params)
 {
@@ -38,6 +45,11 @@ void recordTask(void *params)
 
   //new SDCard("/sdcard", PIN_NUM_MISO, PIN_NUM_MOSI, PIN_NUM_CLK, PIN_NUM_CS);
   
+
+
+
+
+
   vTaskDelay(1000);
   ESP_LOGI(TAGR, "Creating microphone");
 
@@ -59,6 +71,10 @@ void recordTask(void *params)
 
   const char *fname = "tett.wav";
 
+
+  int16_t *samples = (int16_t *)malloc(sizeof(int16_t) * 1024);
+  ESP_LOGI(TAGR, "Start recording");
+
     while (touch_value2 < Threshold)
     {
 
@@ -66,8 +82,7 @@ void recordTask(void *params)
       ESP_LOGI(TAGR, "gravando");
 
 /*
-                                int16_t *samples = (int16_t *)malloc(sizeof(int16_t) * 1024);
-                                ESP_LOGI(TAGR, "Start recording");
+
                                 input->start();
                                 // open the file on the sdcard
                                 FILE *fp = fopen(fname, "wb");
