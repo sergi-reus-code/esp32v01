@@ -19,19 +19,24 @@
 
 const char *TAGR = "RECORD TASK";
 
+#include "esp_vfs_fat.h"
+#include "driver/sdmmc_host.h"
+#include "driver/sdspi_host.h"
+#include "sdmmc_cmd.h"
+#include <stdio.h>
+#include <string.h>
+#include <sys/unistd.h>
+#include <sys/stat.h>
+#include "esp_err.h"
+#include "esp_log.h"
+
+
 #include "FS.h"
 #include "SD.h"
 #include "SPI.h"
 
 
 
-/*
-#define PIN_NUM_MISO GPIO_NUM_4
-#define PIN_NUM_CLK GPIO_NUM_14
-#define PIN_NUM_MOSI GPIO_NUM_23
-#define PIN_NUM_CS GPIO_NUM_25
-
-*/
 
 void recordTask(void *params)
 {
@@ -46,10 +51,35 @@ void recordTask(void *params)
   uint state;
 
 
-  ESP_LOGI(TAGR, "Mounting SDCard on /sdcard");
+if(!SD.begin(5)){
+        Serial.println("Card Mount Failed");
+        return;
+    }
+    uint8_t cardType = SD.cardType();
 
-  //new SDCard("/sdcard", PIN_NUM_MISO, PIN_NUM_MOSI, PIN_NUM_CLK, PIN_NUM_CS);
-  
+    if(cardType == CARD_NONE){
+        Serial.println("No SD card attached");
+        return;
+    }
+
+    Serial.print("SD Card Type: ");
+    if(cardType == CARD_MMC){
+        Serial.println("MMC");
+    } else if(cardType == CARD_SD){
+        Serial.println("SDSC");
+    } else if(cardType == CARD_SDHC){
+        Serial.println("SDHC");
+    } else {
+        Serial.println("UNKNOWN");
+    }
+
+    uint64_t cardSize = SD.cardSize() / (1024 * 1024);
+    Serial.printf("SD Card Size: %lluMB\n", cardSize);
+
+
+
+
+
 
 
 
@@ -78,19 +108,32 @@ void recordTask(void *params)
   int16_t *samples = (int16_t *)malloc(sizeof(int16_t) * 1024);
   ESP_LOGI(TAGR, "Start recording");
 
+                                input->start();
+                                ESP_LOGI(TAGR, "Start recordinggggggggg");
+                                // open the file on the sdcard
+                                FILE *fp = fopen(fname, "wb");
+                                ESP_LOGI(TAGR, "Start recordingfffffffffffffff");
+                                
+                                // create a new wave file writer
+                                WAVFileWriter *writer = new WAVFileWriter(fp, input->sample_rate());
+                                ESP_LOGI(TAGR, "Start recordinghhhhhhhhhhhhh");
+
+
+
+
+
+
+
+
     while (touch_value2 < Threshold)
     {
 
       touch_value2 = touchRead(14);
       ESP_LOGI(TAGR, "gravando");
 
-/*
 
-                                input->start();
-                                // open the file on the sdcard
-                                FILE *fp = fopen(fname, "wb");
-                                // create a new wave file writer
-                                WAVFileWriter *writer = new WAVFileWriter(fp, input->sample_rate());
+
+
                                 // keep writing until the user releases the button
                                 while (touch_value2 < Threshold)
                                 {
@@ -109,7 +152,7 @@ void recordTask(void *params)
                                 free(samples);
                                 ESP_LOGI(TAGR, "Finished recording");
 
-*/
+
 
 
 
