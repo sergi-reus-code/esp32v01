@@ -23,10 +23,15 @@ const char *TAGR = "RECORD TASK";
 #include "SD.h"
 #include "SPI.h"
 
-#define SCK  17
-#define MISO  19
-#define MOSI  23
-#define CS  5
+
+
+/*
+#define PIN_NUM_MISO GPIO_NUM_4
+#define PIN_NUM_CLK GPIO_NUM_14
+#define PIN_NUM_MOSI GPIO_NUM_23
+#define PIN_NUM_CS GPIO_NUM_25
+
+*/
 
 void recordTask(void *params)
 {
@@ -45,8 +50,6 @@ void recordTask(void *params)
 
   //new SDCard("/sdcard", PIN_NUM_MISO, PIN_NUM_MOSI, PIN_NUM_CLK, PIN_NUM_CS);
   
-
-
 
 
 

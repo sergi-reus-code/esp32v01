@@ -17,6 +17,14 @@
 
 #include "config.h"
 
+#define SCK  18
+#define MISO  19
+#define MOSI  23
+#define CS  5
+
+
+
+
 static TaskHandle_t ledsHandler = NULL;   // Leds
 static TaskHandle_t recordHandler = NULL; // Record
 static TaskHandle_t commsHandler = NULL;  // Comms Send&Receiver
@@ -133,14 +141,39 @@ void mainTask(void *params)
 void setup(void)
 {
 
-     
+     Serial.begin(115200);
 
-  vTaskDelay(100); // only to take time
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  vTaskDelay(1000); // only to take time
   ESP_LOGI(TAG, "Starting up..... iNote2022");
 
   //new SDCard("/sdcard", PIN_NUM_MISO, PIN_NUM_MOSI, PIN_NUM_CLK, PIN_NUM_CS);
 
+//SPIClass spi = SPIClass(VSPI);
 
+  //spi.begin(SCK, MISO, MOSI, CS);
+
+  if (!SD.begin(CS)){
+    Serial.println("Card Mount Failed");
+    return;
+  }
   
 
   //xTaskCreatePinnedToCore(&ledsTask, "ledsTask", 2048, NULL, 1, &ledsHandler, 1);
