@@ -4,6 +4,8 @@
         "new": "cpp",
         "functional": "cpp",
         "cstdio": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "rmt.h": "c",
+        "ringbuf.h": "c"
     }
 }
