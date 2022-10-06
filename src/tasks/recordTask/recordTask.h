@@ -77,33 +77,15 @@ if(!SD.begin(5)){
     Serial.printf("SD Card Size: %lluMB\n", cardSize);
 
 
-
-
-
-
-
-
   vTaskDelay(1000);
   ESP_LOGI(TAGR, "Creating microphone");
 
   I2SSampler *input = new I2SMEMSSampler(I2S_NUM_0, i2s_mic_pins, i2s_mic_Config);
 
-
-
-
-
-
-
-
-
-
-
-
-
   uint16_t touch_value2 = touchRead(14);
 
-  const char *fname = "tett.wav";
-
+  const char *fname = "sample.wav";
+WAVFileWriter *writer = NULL;
 
   int16_t *samples = (int16_t *)malloc(sizeof(int16_t) * 1024);
   ESP_LOGI(TAGR, "Start recording");
@@ -115,7 +97,8 @@ if(!SD.begin(5)){
                                 ESP_LOGI(TAGR, "Start recordingfffffffffffffff");
                                 
                                 // create a new wave file writer
-                                WAVFileWriter *writer = new WAVFileWriter(fp, input->sample_rate());
+                                //WAVFileWriter *writer = new WAVFileWriter(fp, 16000);
+                                writer = new WAVFileWriter(fp, 16000);
                                 ESP_LOGI(TAGR, "Start recordinghhhhhhhhhhhhh");
 
 

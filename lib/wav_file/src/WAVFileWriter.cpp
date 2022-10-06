@@ -5,10 +5,13 @@ static const char *TAG = "WAV";
 
 WAVFileWriter::WAVFileWriter(FILE *fp, int sample_rate)
 {
+  ESP_LOGI(TAG, "Panic0");
   m_fp = fp;
   m_header.sample_rate = sample_rate;
   // write out the header - we'll fill in some of the blanks later
+  ESP_LOGI(TAG, "Panic1");
   fwrite(&m_header, sizeof(wav_header_t), 1, m_fp);
+  ESP_LOGI(TAG, "Panic2");
   m_file_size = sizeof(wav_header_t);
 }
 

@@ -13,6 +13,14 @@
 
 #include "esp32-hal-log.h"
 
+#include "FS.h"
+#include "SD.h"
+#include "SPI.h"
+
+const char *TAG = "MAIN APP";
+
+
+
 void wait_for_button_push()
 {
   while (gpio_get_level(GPIO_BUTTON) == 0)
@@ -25,7 +33,7 @@ void record(I2SSampler *input, const char *fname)
 {
   int16_t *samples = (int16_t *)malloc(sizeof(int16_t) * 1024);
   
-  //ESP_LOGI(TAG, "Start recording");
+  ESP_LOGI(TAG, "Start recording");
   input->start();
   // open the file on the sdcard
   FILE *fp = fopen(fname, "wb");
@@ -82,28 +90,50 @@ void play(Output *output, const char *fname)
 
 void main_task(void *param)
 {
-  //ESP_LOGI(TAG, "Starting up");
+  ESP_LOGI(TAG, "Starting up");
 
-#ifdef USE_SPIFFS
-  ESP_LOGI(TAG, "Mounting SPIFFS on /sdcard");
-  SPIFFS.begin(true, "/sdcard");
-#else
-  //ESP_LOGI(TAG, "Mounting SDCard on /sdcard");
-  new SDCard("/sdcard", PIN_NUM_MISO, PIN_NUM_MOSI, PIN_NUM_CLK, PIN_NUM_CS);
-#endif
 
-  //ESP_LOGI(TAG, "Creating microphone");
-#ifdef USE_I2S_MIC_INPUT
-  I2SSampler *input = new I2SMEMSSampler(I2S_NUM_0, i2s_mic_pins, i2s_mic_Config);
-#else
-  I2SSampler *input = new ADCSampler(ADC_UNIT_1, ADC1_CHANNEL_7, i2s_adc_config);
-#endif
 
-#ifdef USE_I2S_SPEAKER_OUTPUT
-  Output *output = new I2SOutput(I2S_NUM_0, i2s_speaker_pins);
-#else
-  Output *output = new DACOutput(I2S_NUM_0);
-#endif
+  ESP_LOGI(TAG, "Mounting SDCard on /sdcard");
+  //new SDCard("/sdcard", PIN_NUM_MISO, PIN_NUM_MOSI, PIN_NUM_CLK, PIN_NUM_CS);
+
+
+if(!SD.begin(5)){
+        Serial.println("Card Mount Failed");
+        return;
+    }
+    uint8_t cardType = SD.cardType();
+
+    if(cardType == CARD_NONE){
+        Serial.println("No SD card attached");
+        return;
+    }
+
+    Serial.print("SD Card Type: ");
+    if(cardType == CARD_MMC){
+        Serial.println("MMC");
+    } else if(cardType == CARD_SD){
+        Serial.println("SDSC");
+    } else if(cardType == CARD_SDHC){
+        Serial.println("SDHC");
+    } else {
+        Serial.println("UNKNOWN");
+    }
+
+    uint64_t cardSize = SD.cardSize() / (1024 * 1024);
+    Serial.printf("SD Card Size: %lluMB\n", cardSize);
+
+
+
+
+
+
+
+  ESP_LOGI(TAG, "Creating microphone");
+
+  //I2SSampler *input = new I2SMEMSSampler(I2S_NUM_0, i2s_mic_pins, i2s_mic_Config);
+  //Output *output = new I2SOutput(I2S_NUM_0, i2s_speaker_pins);
+
 
   gpio_set_direction(GPIO_BUTTON, GPIO_MODE_INPUT);
   gpio_set_pull_mode(GPIO_BUTTON, GPIO_PULLDOWN_ONLY);
@@ -111,8 +141,10 @@ void main_task(void *param)
   while (true)
   {
     // wait for the user to push and hold the button
-    wait_for_button_push();
+    //wait_for_button_push();
+    //record(input, "/sdcard/test.wav");
     record(input, "/sdcard/test.wav");
+    
     // wait for the user to push the button again
     wait_for_button_push();
     play(output, "/sdcard/test.wav");

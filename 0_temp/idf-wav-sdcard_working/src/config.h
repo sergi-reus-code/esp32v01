@@ -31,10 +31,10 @@
 #define GPIO_BUTTON GPIO_NUM_15   //23*15
 
 // sdcard
-#define PIN_NUM_MISO GPIO_NUM_4
-#define PIN_NUM_CLK GPIO_NUM_14
+#define PIN_NUM_MISO GPIO_NUM_19
+#define PIN_NUM_CLK GPIO_NUM_18
 #define PIN_NUM_MOSI GPIO_NUM_23
-#define PIN_NUM_CS GPIO_NUM_25
+#define PIN_NUM_CS GPIO_NUM_5
 
 
 // i2s config for reading from of I2S

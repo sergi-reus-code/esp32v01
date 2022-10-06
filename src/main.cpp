@@ -137,7 +137,7 @@ void setup(void)
   ESP_LOGI(TAG, "Starting up..... iNote2022");
 
   // xTaskCreatePinnedToCore(&ledsTask, "ledsTask", 2048, NULL, 1, &ledsHandler, 1);
-  xTaskCreatePinnedToCore(&recordTask, "recordTask", 4096, NULL, 2, &recordHandler, 1);
+  xTaskCreatePinnedToCore(&recordTask, "recordTask", 8192, NULL, 2, &recordHandler, 1);
   // xTaskCreatePinnedToCore(&commsTask, "commsTask", 2048, NULL, 2, &commsHandler, 0);
   // xTaskCreatePinnedToCore(&playerTask, "playerTask", 4096, NULL, 2, &playerHandler, 1);
 

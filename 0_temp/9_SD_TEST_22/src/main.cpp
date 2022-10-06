@@ -1,9 +1,11 @@
 #include <Arduino.h>
 
-#include "SDCard.h"
 
 
 
+#include "FS.h"
+#include "SD.h"
+#include "SPI.h"
 
 
 
@@ -20,7 +22,31 @@ void setup(){
 
   Serial.begin(115200);
 
-new SDCard("/fs", GPIO_NUM_19, GPIO_NUM_23, GPIO_NUM_18, GPIO_NUM_5);
+if(!SD.begin(5)){
+        Serial.println("Card Mount Failed");
+        return;
+    }
+    uint8_t cardType = SD.cardType();
+
+    if(cardType == CARD_NONE){
+        Serial.println("No SD card attached");
+        return;
+    }
+
+    Serial.print("SD Card Type: ");
+    if(cardType == CARD_MMC){
+        Serial.println("MMC");
+    } else if(cardType == CARD_SD){
+        Serial.println("SDSC");
+    } else if(cardType == CARD_SDHC){
+        Serial.println("SDHC");
+    } else {
+        Serial.println("UNKNOWN");
+    }
+
+    uint64_t cardSize = SD.cardSize() / (1024 * 1024);
+    Serial.printf("SD Card Size: %lluMB\n", cardSize);
+
 
   
 }
