@@ -77,8 +77,12 @@ void recordTask(void *params)
                               m_header.sample_rate = input->sample_rate();
                               // write out the header - we'll fill in some of the blanks later
                               ESP_LOGI(TAGR, "Panic1");
-                              fwrite(&m_header, sizeof(wav_header_t), 1, m_fp);
-                              taskYIELD();
+
+
+
+
+                              //fwrite(&m_header, sizeof(wav_header_t), 1, m_fp);
+                              //taskYIELD();
                               
                               
                               
@@ -112,7 +116,25 @@ void recordTask(void *params)
                                 {
                                   int samples_read = input->read(samples, 1024);
                                   int64_t start = esp_timer_get_time();
+                                  ESP_LOGI(TAGR, "Finished recording11111111111111111");
+
+
+
+
+
                                   //writer->write(samples, samples_read);
+
+                                    fwrite(samples, sizeof(int16_t), samples_read, m_fp);
+                                    m_file_size += sizeof(int16_t) * samples_read;
+
+
+
+
+
+
+
+
+                                  ESP_LOGI(TAGR, "Finished recording2222222222222222");
                                   int64_t end = esp_timer_get_time();
                                   ESP_LOGI(TAGR, "Wrote %d samples in %lld microseconds", samples_read, end - start);
                                 }

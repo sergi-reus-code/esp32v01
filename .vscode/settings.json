@@ -6,6 +6,7 @@
         "cstdio": "cpp",
         "fstream": "cpp",
         "rmt.h": "c",
-        "ringbuf.h": "c"
+        "ringbuf.h": "c",
+        "algorithm": "cpp"
     }
 }
