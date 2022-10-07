@@ -78,7 +78,7 @@ void recordTask(void *params)
                               // write out the header - we'll fill in some of the blanks later
                               ESP_LOGI(TAGR, "Panic1");
                               fwrite(&m_header, sizeof(wav_header_t), 1, m_fp);
-                              
+                              taskYIELD();
                               
                               
                               

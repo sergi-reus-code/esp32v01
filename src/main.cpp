@@ -17,6 +17,8 @@
 
 #include "config.h"
 
+#include "SDCard.h"
+
 
 
 static TaskHandle_t ledsHandler = NULL;   // Leds
@@ -37,7 +39,7 @@ void IRAM_ATTR callback()
 void goToSleep()
 {
 
-  touchAttachInterrupt(14, callback, Threshold); // Setup interrupt on Touch Pad 6 (GPIO14) ..... Threshold
+  touchAttachInterrupt(32, callback, Threshold); // Setup interrupt on Touch Pad 6 (GPIO14) ..... Threshold
   esp_err_t ret = esp_sleep_enable_touchpad_wakeup();
   if (ret != ESP_OK)
   {
@@ -53,9 +55,9 @@ void mainTask(void *params)
   ESP_LOGI(TAG, "Starting up..... iNote2022");
 
   uint state;
-  uint16_t touch_value1 = touchRead(14);
+  uint16_t touch_value1 = touchRead(32);
   vTaskDelay(500);
-  uint16_t touch_value2 = touchRead(14);
+  uint16_t touch_value2 = touchRead(32);
   ESP_LOGI(TAG, "Touch value --> %d", touch_value2);
 
   if ((touch_value1 < Threshold) && (touch_value2 < Threshold))
@@ -131,14 +133,16 @@ void setup(void)
 
     Serial.begin(115200);
     
+//ESP_LOGI(TAGR, "Mounting SDCard on /sdcard");
+  //new SDCard("/sdcard", PIN_NUM_MISO, PIN_NUM_MOSI, PIN_NUM_CLK, PIN_NUM_CS);
 
   vTaskDelay(1000); // only to take time
   ESP_LOGI(TAG, "Starting up..... iNote2022");
 
-  xTaskCreatePinnedToCore(&ledsTask, "ledsTask", 1024, NULL, 1, &ledsHandler, 1);
-  xTaskCreatePinnedToCore(&recordTask, "recordTask", 2048, NULL, 2, &recordHandler, 1);
-  xTaskCreatePinnedToCore(&commsTask, "commsTask", 2048, NULL, 2, &commsHandler, 0);
-  xTaskCreatePinnedToCore(&playerTask, "playerTask", 2048, NULL, 2, &playerHandler, 1);
+  //xTaskCreatePinnedToCore(&ledsTask, "ledsTask", 1024, NULL, 1, &ledsHandler, 1);
+  xTaskCreatePinnedToCore(&recordTask, "recordTask", 5120, NULL, 2, &recordHandler, 1);
+  //xTaskCreatePinnedToCore(&commsTask, "commsTask", 2048, NULL, 2, &commsHandler, 0);
+  //xTaskCreatePinnedToCore(&playerTask, "playerTask", 2048, NULL, 2, &playerHandler, 1);
 
   xTaskCreatePinnedToCore(&mainTask, "mainTask", 2048, NULL, 2, &mainHandler, 1);
 }

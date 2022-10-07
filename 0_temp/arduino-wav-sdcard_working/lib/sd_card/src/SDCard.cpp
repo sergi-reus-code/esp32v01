@@ -87,3 +87,4 @@ SDCard::~SDCard()
   //deinitialize the bus after all devices are removed
   spi_bus_free(spi_host_device_t(m_host.slot));
 }
+

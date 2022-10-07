@@ -29,13 +29,13 @@
 #define I2S_SPEAKER_SERIAL_DATA GPIO_NUM_18
 
 // record button
-#define GPIO_BUTTON GPIO_NUM_15    //23*15
+#define GPIO_BUTTON GPIO_NUM_23    //23*15
 
 // sdcard
-#define PIN_NUM_MISO GPIO_NUM_19
-#define PIN_NUM_CLK GPIO_NUM_18
-#define PIN_NUM_MOSI GPIO_NUM_23
-#define PIN_NUM_CS GPIO_NUM_5
+#define PIN_NUM_MISO GPIO_NUM_12
+#define PIN_NUM_CLK GPIO_NUM_14
+#define PIN_NUM_MOSI GPIO_NUM_13
+#define PIN_NUM_CS GPIO_NUM_15
 
 #define Threshold 15 /* Greater the value, more the sensitivity */
 
