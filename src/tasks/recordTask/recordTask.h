@@ -1,5 +1,7 @@
 #pragma once
 
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,31 +13,18 @@
 
 #include "WAVFileWriter.h"
 
-#include "SDCard.h"
 
-#include "config.h"
 
 #include "class/recordClass.h"
 
 const char *TAGR = "RECORD TASK";
 
-#include "esp_vfs_fat.h"
-#include "driver/sdmmc_host.h"
-#include "driver/sdspi_host.h"
-#include "sdmmc_cmd.h"
-#include <stdio.h>
-#include <string.h>
-#include <sys/unistd.h>
-#include <sys/stat.h>
-#include "esp_err.h"
-#include "esp_log.h"
 
+#include "config.h"
 
-#include "FS.h"
-#include "SD.h"
-#include "SPI.h"
+#include "SDCard.h"
 
-
+#include "WAVFile.h"
 
 
 void recordTask(void *params)
@@ -49,32 +38,9 @@ void recordTask(void *params)
   if(mainTaskHandle == NULL){ ESP_LOGE(TAGR, "Main Handler Null -----> ERROR MUST RESTART");}
 
   uint state;
+  ESP_LOGI(TAGR, "Mounting SDCard on /sdcard");
+  new SDCard("/sdcard", PIN_NUM_MISO, PIN_NUM_MOSI, PIN_NUM_CLK, PIN_NUM_CS);
 
-
-if(!SD.begin(5)){
-        Serial.println("Card Mount Failed");
-        return;
-    }
-    uint8_t cardType = SD.cardType();
-
-    if(cardType == CARD_NONE){
-        Serial.println("No SD card attached");
-        return;
-    }
-
-    Serial.print("SD Card Type: ");
-    if(cardType == CARD_MMC){
-        Serial.println("MMC");
-    } else if(cardType == CARD_SD){
-        Serial.println("SDSC");
-    } else if(cardType == CARD_SDHC){
-        Serial.println("SDHC");
-    } else {
-        Serial.println("UNKNOWN");
-    }
-
-    uint64_t cardSize = SD.cardSize() / (1024 * 1024);
-    Serial.printf("SD Card Size: %lluMB\n", cardSize);
 
 
   vTaskDelay(1000);
@@ -82,10 +48,10 @@ if(!SD.begin(5)){
 
   I2SSampler *input = new I2SMEMSSampler(I2S_NUM_0, i2s_mic_pins, i2s_mic_Config);
 
-  uint16_t touch_value2 = touchRead(14);
+  uint16_t touch_value2 = touchRead(32);
 
   const char *fname = "sample.wav";
-WAVFileWriter *writer = NULL;
+
 
   int16_t *samples = (int16_t *)malloc(sizeof(int16_t) * 1024);
   ESP_LOGI(TAGR, "Start recording");
@@ -94,11 +60,35 @@ WAVFileWriter *writer = NULL;
                                 ESP_LOGI(TAGR, "Start recordinggggggggg");
                                 // open the file on the sdcard
                                 FILE *fp = fopen(fname, "wb");
-                                ESP_LOGI(TAGR, "Start recordingfffffffffffffff");
+                                ESP_LOGI(TAGR, "Start recordingfffffffffffffff......%d", input->sample_rate());
                                 
                                 // create a new wave file writer
-                                //WAVFileWriter *writer = new WAVFileWriter(fp, 16000);
-                                writer = new WAVFileWriter(fp, 16000);
+                                //WAVFileWriter *writer = new WAVFileWriter(fp, input->sample_rate());
+
+                                  ESP_LOGI(TAGR, "Panic0");
+                              
+                              
+                                int m_file_size;
+
+  FILE *m_fp;
+  wav_header_t m_header;
+                              
+                              m_fp = fp;
+                              m_header.sample_rate = input->sample_rate();
+                              // write out the header - we'll fill in some of the blanks later
+                              ESP_LOGI(TAGR, "Panic1");
+                              fwrite(&m_header, sizeof(wav_header_t), 1, m_fp);
+                              
+                              
+                              
+                              
+                              
+                              ESP_LOGI(TAGR, "Panic2");
+                               m_file_size = sizeof(wav_header_t);
+
+
+
+                                
                                 ESP_LOGI(TAGR, "Start recordinghhhhhhhhhhhhh");
 
 
@@ -111,7 +101,7 @@ WAVFileWriter *writer = NULL;
     while (touch_value2 < Threshold)
     {
 
-      touch_value2 = touchRead(14);
+      touch_value2 = touchRead(32);
       ESP_LOGI(TAGR, "gravando");
 
 
@@ -122,16 +112,16 @@ WAVFileWriter *writer = NULL;
                                 {
                                   int samples_read = input->read(samples, 1024);
                                   int64_t start = esp_timer_get_time();
-                                  writer->write(samples, samples_read);
+                                  //writer->write(samples, samples_read);
                                   int64_t end = esp_timer_get_time();
                                   ESP_LOGI(TAGR, "Wrote %d samples in %lld microseconds", samples_read, end - start);
                                 }
                                 // stop the input
                                 input->stop();
                                 // and finish the writing
-                                writer->finish();
+                                //writer->finish();
                                 fclose(fp);
-                                delete writer;
+                                //delete writer;
                                 free(samples);
                                 ESP_LOGI(TAGR, "Finished recording");
 
