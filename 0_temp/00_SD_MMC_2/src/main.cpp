@@ -56,6 +56,23 @@ void listDir(const char *dirName)
 void setup(void)
 {
     
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     sdmmc_host_t host = SDSPI_HOST_DEFAULT();
     sdspi_slot_config_t slot_config = SDSPI_SLOT_CONFIG_DEFAULT();
     slot_config.gpio_miso = PIN_NUM_MISO;
@@ -146,3 +163,6 @@ void setup(void)
 void loop(){
 
 }
+
+
+

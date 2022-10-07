@@ -1,5 +1,7 @@
 #include <Arduino.h>
 
+#include <SD_MMC.h>
+
 static TaskHandle_t receiverHandler = NULL;
 
 
@@ -95,6 +97,48 @@ void setup(){
 
   Serial.begin(115200);
   delay(250); //Take some time to open up the Serial Monitor
+
+if(!SD_MMC.begin(5)) {
+Serial.println("SD Card Mount Failure… Rebooting");
+// ESP.restart();
+} else {
+fs::FS &tfs = SD_MMC;
+uint8_t cardType = SD_MMC.cardType();
+switch (cardType) {
+case CARD_NONE : Serial.println("No SD Card type found");
+break;
+case CARD_MMC : Serial.println("MMC Card detected…");
+break;
+case CARD_SD : Serial.println("SD Card detected…");
+break;
+case CARD_SDHC : Serial.println("SDHC Card detected…");
+break;
+default : Serial.println("Default card detected ???");
+break;
+}
+uint8_t bufr[5] = {'a','b', 'c', 'd', '\0'};
+String tstpath = "/test1.txt";
+File xfile=tfs.open(tstpath.c_str(), FILE_WRITE);
+xfile.write(bufr, 5);
+delay(100);
+xfile.close();
+delay(100);
+File tfile=tfs.open(tstpath.c_str());
+unsigned int tstsz = tfile.size();
+Serial.println ("Test file saved as " + tstpath + " with size of " + String(tstsz) );
+tfile.close();
+}
+SD_MMC.end();
+
+
+
+
+
+
+
+
+
+
 
   int touchValue = touchRead(T3);
   Serial.print(touchValue);

@@ -18,6 +18,8 @@ static const char *TAG = "SDC";
 
 SDCard::SDCard(const char *mount_point, gpio_num_t miso, gpio_num_t mosi, gpio_num_t clk, gpio_num_t cs)
 {
+
+  ESP_LOGI(TAG, "Initializing SD card00000000000");
   m_mount_point = mount_point;
   esp_err_t ret;
   // Options for mounting the filesystem.
@@ -38,7 +40,7 @@ SDCard::SDCard(const char *mount_point, gpio_num_t miso, gpio_num_t mosi, gpio_n
   slot_config.gpio_cs = cs;
 
   ret = esp_vfs_fat_sdmmc_mount(m_mount_point.c_str(), &host, &slot_config, &mount_config, &m_card);
-
+ESP_LOGI(TAG, "Initializing SD card33333333333333");
   if (ret != ESP_OK)
   {
     if (ret == ESP_FAIL)
