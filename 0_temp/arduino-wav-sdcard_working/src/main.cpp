@@ -2,9 +2,7 @@
 #include <stdio.h>
 #include <freertos/FreeRTOS.h>
 #include <I2SMEMSSampler.h>
-#include <ADCSampler.h>
 #include <I2SOutput.h>
-#include <DACOutput.h>
 #include <SDCard.h>
 #include "SPIFFS.h"
 #include <WAVFileReader.h>
@@ -12,11 +10,11 @@
 #include "config.h"
 
 #include "esp32-hal-log.h"
-
+/*
 #include "FS.h"
 #include "SD.h"
 #include "SPI.h"
-
+*/
 const char *TAG = "MAIN APP";
 
 
@@ -46,7 +44,7 @@ void record(I2SSampler *input, const char *fname)
     int64_t start = esp_timer_get_time();
     writer->write(samples, samples_read);
     int64_t end = esp_timer_get_time();
-    //ESP_LOGI(TAG, "Wrote %d samples in %lld microseconds", samples_read, end - start);
+    ESP_LOGI(TAG, "Wrote %d samples in %lld microseconds", samples_read, end - start);
   }
   // stop the input
   input->stop();
@@ -55,7 +53,7 @@ void record(I2SSampler *input, const char *fname)
   fclose(fp);
   delete writer;
   free(samples);
-  //ESP_LOGI(TAG, "Finished recording");
+  ESP_LOGI(TAG, "Finished recording");
 }
 
 void play(Output *output, const char *fname)
@@ -65,9 +63,9 @@ void play(Output *output, const char *fname)
   FILE *fp = fopen(fname, "rb");
   // create a new wave file writer
   WAVFileReader *reader = new WAVFileReader(fp);
-  //ESP_LOGI(TAG, "Start playing");
+  ESP_LOGI(TAG, "Start playing");
   output->start(reader->sample_rate());
-  //ESP_LOGI(TAG, "Opened wav file");
+  ESP_LOGI(TAG, "Opened wav file");
   // read until theres no more samples
   while (true)
   {
@@ -76,9 +74,9 @@ void play(Output *output, const char *fname)
     {
       break;
     }
-    //ESP_LOGI(TAG, "Read %d samples", samples_read);
+    ESP_LOGI(TAG, "Read %d samples", samples_read);
     output->write(samples, samples_read);
-    //ESP_LOGI(TAG, "Played samples");
+    ESP_LOGI(TAG, "Played samples");
   }
   // stop the input
   output->stop();
@@ -109,13 +107,13 @@ void main_task(void *param)
   while (true)
   {
     // wait for the user to push and hold the button
-    //wait_for_button_push();
-    //record(input, "/sdcard/test.wav");
+    wait_for_button_push();
     record(input, "/sdcard/test.wav");
     
     // wait for the user to push the button again
     wait_for_button_push();
     play(output, "/sdcard/test.wav");
+    play(output, "/sdcard/sample.wav");
     vTaskDelay(pdMS_TO_TICKS(1000));
   }
 }

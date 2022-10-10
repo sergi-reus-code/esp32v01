@@ -13,13 +13,16 @@ void I2SOutput::start(int sample_rate)
         .sample_rate = sample_rate,
         .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
         .channel_format = I2S_CHANNEL_FMT_RIGHT_LEFT,
-        .communication_format = (i2s_comm_format_t)(I2S_COMM_FORMAT_I2S),
+        .communication_format = (i2s_comm_format_t)(I2S_COMM_FORMAT_STAND_I2S),
         .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
         .dma_buf_count = 2,
         .dma_buf_len = 1024,
         .use_apll = false,
         .tx_desc_auto_clear = true,
-        .fixed_mclk = 0};
+        .fixed_mclk = 0,
+        .mclk_multiple = (i2s_mclk_multiple_t) I2S_MCLK_MULTIPLE_DEFAULT,              /*!< The multiple of I2S master clock(MCLK) to sample rate */
+        .bits_per_chan = (i2s_bits_per_chan_t) I2S_BITS_PER_CHAN_DEFAULT};
+    
     //install and start i2s driver
     i2s_driver_install(m_i2s_port, &i2s_config, 0, NULL);
     // set up the i2s pins
