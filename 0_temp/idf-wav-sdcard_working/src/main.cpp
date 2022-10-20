@@ -113,6 +113,8 @@ void app_main(void)
     // wait for the user to push the button again
     wait_for_button_push();
     play(output, "/sdcard/test.wav");
+    play(output, "/sdcard/sample.wav");
+
     vTaskDelay(pdMS_TO_TICKS(1000));
   }
 }
