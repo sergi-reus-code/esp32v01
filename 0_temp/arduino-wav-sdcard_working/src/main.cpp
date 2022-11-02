@@ -4,17 +4,12 @@
 #include <I2SMEMSSampler.h>
 #include <I2SOutput.h>
 #include <SDCard.h>
-#include "SPIFFS.h"
 #include <WAVFileReader.h>
 #include <WAVFileWriter.h>
 #include "config.h"
 
 #include "esp32-hal-log.h"
-/*
-#include "FS.h"
-#include "SD.h"
-#include "SPI.h"
-*/
+
 const char *TAG = "MAIN APP";
 
 
