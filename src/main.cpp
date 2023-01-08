@@ -1,5 +1,14 @@
 #include <Arduino.h>
 
+#include "BluetoothA2DPSink.h"// Incluye la librería A2DP
+#include <SPI.h>  // Incluye la librería SPI para comunicación con la tarjeta SD
+#include <SD.h> 
+
+BluetoothA2DPSink a2dp_sink;
+
+
+
+/*
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -127,26 +136,44 @@ void mainTask(void *params)
     goToSleep();
   }
 }
+*/
+
+
 
 void setup(void)
 {
 
-    Serial.begin(115200);
+    //Serial.begin(115200);
     
 
-  vTaskDelay(1000); // only to take time
-  ESP_LOGI(TAG, "Starting up..... iNote2022");
+  //vTaskDelay(1000); // only to take time
+  //ESP_LOGI(TAG, "Starting up..... iNote2022");
 
   //xTaskCreatePinnedToCore(&ledsTask, "ledsTask", 1024, NULL, 1, &ledsHandler, 1);
-   xTaskCreatePinnedToCore(&recordTask, "recordTask", 5120, NULL, 2, &recordHandler, 1);
+  // xTaskCreatePinnedToCore(&recordTask, "recordTask", 5120, NULL, 2, &recordHandler, 1);
   //xTaskCreatePinnedToCore(&commsTask, "commsTask", 2048, NULL, 2, &commsHandler, 0);
   //xTaskCreatePinnedToCore(&playerTask, "playerTask", 2048, NULL, 2, &playerHandler, 1);
 
-  xTaskCreatePinnedToCore(&mainTask, "mainTask", 2048, NULL, 2, &mainHandler, 1);
+  //xTaskCreatePinnedToCore(&mainTask, "mainTask", 2048, NULL, 2, &mainHandler, 1);
+  
+  
+  //---------------------------------------------------------------------------------------------
+
+  Serial.begin(115200);
+  a2dp_sink.start("MyMusic");  
+
+
+
 }
 
 void loop()
 {
   // Deleting loop Task
-  vTaskDelete(NULL);
+  //vTaskDelete(NULL);
+
+  //------------------------------------------------------------------------------------------
+
+
+
+
 }

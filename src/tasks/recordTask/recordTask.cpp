@@ -1,4 +1,4 @@
-#pragma once
+//#pragma once
 
 
 
@@ -29,6 +29,9 @@ const char *TAGR = "RECORD TASK";
 
 void recordTask(void *params)
 {
+
+/*
+
   //Creamos el objeto leds
   recordClass *recordObject = new recordClass();
  
@@ -171,6 +174,6 @@ void recordTask(void *params)
   vTaskDelay(500);  
   vTaskDelete(NULL);
 
-
+*/
 
 }
